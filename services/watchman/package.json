@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@kremen/types": "0.0.7",
-    "axios": "0.20.0",
+    "axios": "0.21.1",
     "lodash": "4.17.20",
     "mongodb": "3.6.3",
     "ws": "7.3.1"

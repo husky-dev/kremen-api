@@ -1,0 +1,8 @@
+FROM node:14-alpine3.10
+
+WORKDIR /usr/src/app
+
+ENV NODE_ENV=dev
+ENV PORT=8080
+
+EXPOSE 8080

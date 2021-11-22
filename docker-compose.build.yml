@@ -8,12 +8,6 @@ services:
       context: ./web/dev
       dockerfile: Dockerfile.build
 
-  web-transport:
-    image: kremen-web-transport
-    build:
-      context: ./web/transport
-      dockerfile: Dockerfile.build
-
   web-deputies:
     image: kremen-web-deputies
     build:

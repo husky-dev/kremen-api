@@ -7,6 +7,7 @@ services:
     container_name: entry
     hostname: entry
     depends_on:
+      - transport-web
       - api
     volumes:
       - 'ssl:/etc/letsencrypt'
@@ -14,6 +15,11 @@ services:
       - '80:80'
       - '443:443'
     restart: always
+
+  transport-web:
+    image: ghcr.io/husky-dev/kremen-transport-web/app:latest
+    container_name: transport-web
+    hostname: transport-web
 
   watchman:
     image: ghcr.io/husky-dev/kremen-api/watchman:latest

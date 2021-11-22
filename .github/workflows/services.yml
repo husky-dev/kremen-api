@@ -30,7 +30,7 @@ jobs:
       env:
         ENVS: ${{ secrets.ENVS }}
       run: |
-        echo $ENVS | base64 --decode > setup_envs.sh
+        echo "$ENVS" > setup_envs.sh
         chmod +x setup_envs.sh
         ./setup_envs.sh
     - name: Build

@@ -161,7 +161,7 @@ const run = async () => {
   const buildOptions = {
     entryPoints: [entryFilePath],
     bundle: true,
-    sourcemap: env === 'dev',
+    sourcemap: env !== 'prd',
     minify: env === 'prd',
     outfile: bundleFilePath,
     watch: conf.watch,

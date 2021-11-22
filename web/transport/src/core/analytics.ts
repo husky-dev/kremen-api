@@ -7,7 +7,7 @@ import getUserLocale, { getUserLocales } from './locales';
 
 const log = Log('core.analytics');
 
-const enabled = ENV !== 'dev';
+const enabled = APP_ENV !== 'dev';
 // const enabled = true;
 
 mixpanel.init('8133cb5ad59bba7d4dff11d715b39147');
@@ -39,8 +39,8 @@ const initUser = () => {
   const locales = getUserLocales();
   log.debug('locale=', locale, ', locales=', locales);
   mixpanel.people.set({
-    version: VERSION,
-    env: ENV,
+    version: APP_VERSION,
+    env: APP_ENV,
     locale,
     locales,
   });

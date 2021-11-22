@@ -7,7 +7,7 @@ import { ApiReqOpt, getErrFromResp } from './utils';
 const log = Log('core.api');
 
 export const getApiRoot = () => {
-  switch (ENV) {
+  switch (APP_ENV) {
     case 'loc':
       return {
         api: 'http://localhost:8080',

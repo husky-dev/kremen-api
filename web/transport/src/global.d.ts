@@ -20,14 +20,15 @@ declare module '*.json' {
 }
 
 declare module '*.md' {
-  const content: any;
+  import { ReactNode } from 'react';
+  const content: { html: ReactNode };
   export default content;
 }
 
 declare module 'googlemaps';
 
-declare const VERSION: string | undefined;
-declare const ENV: 'dev' | 'prd' | 'loc' | undefined;
+declare const APP_VERSION: string | undefined;
+declare const APP_ENV: 'dev' | 'prd' | 'loc' | undefined;
 declare const MAPS_API_KEY: string | undefined;
 declare const APP_NAME: string | undefined;
 declare const APP_TITLE: string | undefined;

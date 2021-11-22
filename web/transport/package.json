@@ -19,24 +19,12 @@
     "мапа"
   ],
   "scripts": {
-    "start": "yarn start:dev",
-    "start:dev": "webpack-dev-server --mode development --env.ENVFILE=.env.dev",
-    "start:loc": "webpack-dev-server --mode development --env.ENVFILE=.env.loc",
-    "start:prd": "webpack-dev-server --mode production --env.ENVFILE=.env.dev",
-    "dist": "yarn dist:prd",
-    "dist:dev": "rm -rf dist/* && webpack -p --env.ENVFILE=.env.dev",
-    "dist:prd": "rm -rf dist/* && webpack -p --env.ENVFILE=.env.prd",
-    "profile:build:prd": "webpack --profile --mode production --env.ENVFILE=.env.prd --json > stats.prd.json",
-    "profile:analyse:prd": "webpack-bundle-analyzer stats.prd.json",
+    "start": "node esbuild.js --serve",
+    "dist": "rm -rf dist/* && node esbuild.js",
     "lint": "yarn lint:types && yarn lint:eslint",
     "lint:types": "tsc --noEmit --skipLibCheck",
     "lint:eslint": "eslint \"src/**\"",
-    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "data:update": "./scripts/init_data_update.sh",
-    "clear:cache": "rm -rf ./.cache",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "postinstall": "yarn clear:cache"
+    "format": "prettier --write \"src/**/*.{ts,tsx}\""
   },
   "husky": {
     "hooks": {
@@ -68,11 +56,6 @@
     "redux-persist": "6.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.12.3",
-    "@storybook/addon-actions": "^6.0.26",
-    "@storybook/addon-links": "^6.0.26",
-    "@storybook/addons": "^6.0.26",
-    "@storybook/react": "^6.0.26",
     "@types/color": "3.0.1",
     "@types/googlemaps": "3.40.0",
     "@types/lodash": "4.14.162",
@@ -87,26 +70,16 @@
     "@types/react-router-dom": "5.1.6",
     "@typescript-eslint/eslint-plugin": "4.4.1",
     "@typescript-eslint/parser": "4.4.1",
-    "babel-loader": "8.1.0",
-    "copy-webpack-plugin": "6.2.1",
-    "css-loader": "3.4.2",
     "dotenv": "8.2.0",
+    "ejs": "3.1.6",
+    "esbuild": "0.13.15",
+    "esbuild-plugin-markdown": "0.0.3",
     "eslint": "7.11.0",
     "eslint-plugin-react": "7.21.4",
-    "file-loader": "6.2.0",
-    "html-webpack-plugin": "4.5.0",
     "husky": "4.3.0",
     "lint-staged": "10.4.2",
-    "markdown-loader": "6.0.0",
     "prettier": "2.1.2",
-    "raw-loader": "4.0.2",
     "redux-devtools-extension": "2.13.8",
-    "style-loader": "2.0.0",
-    "ts-loader": "8.0.7",
-    "typescript": "4.0.5",
-    "url-loader": "4.1.1",
-    "webpack": "5.3.1",
-    "webpack-cli": "3.3.12",
-    "webpack-dev-server": "3.11.0"
+    "typescript": "4.0.5"
   }
 }

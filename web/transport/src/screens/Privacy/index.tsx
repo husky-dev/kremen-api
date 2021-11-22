@@ -3,12 +3,12 @@ import { DocTitle, Markdown } from 'components/Common';
 import React, { FC } from 'react';
 import { Styles } from 'styles';
 
-import privacyContent from 'content/privacy.md';
+import privacyContent from './assets/privacy.md';
 
 export const PrivacyScreen: FC = () => (
   <Paper style={styles.content}>
     <DocTitle title="Політика конфіденційності" />
-    <Markdown>{privacyContent}</Markdown>
+    <Markdown>{privacyContent.html}</Markdown>
   </Paper>
 );
 

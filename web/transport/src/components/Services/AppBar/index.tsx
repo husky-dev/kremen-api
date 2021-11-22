@@ -4,8 +4,8 @@ import { Markdown, View } from 'components/Common';
 import { AlertDialog } from 'components/Dialogs';
 import ServicesDropdown from 'components/Services/Dropdown';
 import ServicesIcon from 'components/Services/Icon';
-import aboutBodyContent from 'content/aboutBody.md';
-import aboutFooterContent from 'content/aboutFooter.md';
+import aboutBodyContent from './assets/aboutBody.md';
+import aboutFooterContent from './assets/aboutFooter.md';
 import { track } from 'core/analytics';
 import React, { FC, useState } from 'react';
 import { colors, Styles, useTheme } from 'styles';
@@ -39,8 +39,8 @@ export const ServicesAppBar: FC = () => {
         </Toolbar>
       </AppBar>
       <AlertDialog title="Про додаток" visible={aboutVisible} onClose={() => setAboutVisible(false)}>
-        <Markdown>{aboutBodyContent}</Markdown>
-        <Markdown>{aboutFooterContent}</Markdown>
+        <Markdown>{aboutBodyContent.html}</Markdown>
+        <Markdown>{aboutFooterContent.html}</Markdown>
       </AlertDialog>
     </>
   );

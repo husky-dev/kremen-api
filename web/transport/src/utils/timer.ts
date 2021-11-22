@@ -5,7 +5,7 @@ export class Timer {
   private handler: TimerHandler;
   private running: boolean = false;
   private interval: number;
-  private timeout: NodeJS.Timeout | null = null;
+  private timeout: number | null = null;
 
   constructor(handler: TimerHandler, interval: number, immediate?: boolean) {
     this.handler = handler;

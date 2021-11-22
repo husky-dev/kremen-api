@@ -51,7 +51,7 @@ export const SidePanel: FC<Props> = ({ style, routes, buses, selected, onSelecte
         <View style={styles.footer} row={true} justifyContent="space-between">
           <View style={m(styles.footerItem, styles.total)}>{`Всього: ${buses.length}`}</View>
           <View style={styles.footerItem}>{`Активно: ${buses.filter(item => !item.offline).length}`}</View>
-          <View style={m(styles.footerItem, styles.version)}>{`v${VERSION}`}</View>
+          <View style={m(styles.footerItem, styles.version)}>{`v${APP_VERSION}`}</View>
         </View>
       </Collapse>
     </Paper>

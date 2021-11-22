@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <!-- Title -->
-    <title><%= htmlWebpackPlugin.options.title %> | <%= htmlWebpackPlugin.options.company %></title>
+    <title><%= data.title %> | <%= data.company %></title>
     <!-- Viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Meta -->
-    <meta name=description content="<%= htmlWebpackPlugin.options.description %>"/>
-    <meta name="keywords" content="<%= htmlWebpackPlugin.options.keywords.join(', ') %>" />
+    <meta name=description content="<%= data.description %>"/>
+    <meta name="keywords" content="<%= data.keywords.join(', ') %>" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="<%= htmlWebpackPlugin.options.title %>"/>
-    <meta property="og:description" content="<%= htmlWebpackPlugin.options.description %>"/>
-    <meta property="og:url" content="<%= htmlWebpackPlugin.options.url %>"/>
-    <meta property="og:site_name" content="<%= htmlWebpackPlugin.options.title %>"/>
+    <meta property="og:title" content="<%= data.title %>"/>
+    <meta property="og:description" content="<%= data.description %>"/>
+    <meta property="og:url" content="<%= data.url %>"/>
+    <meta property="og:site_name" content="<%= data.title %>"/>
     <meta property="og:image" content="/assets/banner.png?v=4"/>
     <!-- Favicons -->
     <link rel="shortcut icon" href="/assets/fav-32.png?v=4">
     <link rel="apple-touch-icon" href="/assets/fav-180.png?v=4">
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" />
+    <!-- App -->
+    <script defer="defer" src="/app.js?<%= data.bundleHash %>"></script>
+    <link rel="stylesheet" href="/app.css?<%= data.cssHash %>" />
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77334417-5"></script>
     <script>

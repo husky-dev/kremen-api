@@ -8,6 +8,7 @@ services:
     hostname: entry
     depends_on:
       - transport-web
+      - equpiment-web
       - api
       - watchman
     volumes:
@@ -21,6 +22,11 @@ services:
     image: ghcr.io/husky-dev/kremen-transport-web/app:latest
     container_name: transport-web
     hostname: transport-web
+
+  equpiment-web:
+    image: ghcr.io/husky-dev/kremen-equpiment-web/app:latest
+    container_name: equpiment-web
+    hostname: equpiment-web
 
   watchman:
     image: ghcr.io/husky-dev/kremen-api/watchman:latest

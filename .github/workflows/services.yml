@@ -11,14 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: 'Notify: preparing'
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        format: markdown
-        args: |
-          🆕 *kremen-api:* preparing for the new build
     - uses: actions/checkout@v1
     - name: Login
       uses: docker/login-action@v1

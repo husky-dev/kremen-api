@@ -2,17 +2,11 @@ version: '3.7'
 
 services:
 
-  web-dev:
-    image: kremen-web-dev
-    build:
-      context: ./web/dev
-      dockerfile: Dockerfile.build
-
   entry:
     image: ghcr.io/husky-dev/kremen-api/entry:latest
     build:
       context: ./services/entry
-      dockerfile: Dockerfile.prd
+      dockerfile: Dockerfile
 
   api:
     image: ghcr.io/husky-dev/kremen-api/api:latest

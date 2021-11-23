@@ -8,7 +8,8 @@ services:
     hostname: entry
     depends_on:
       - transport-web
-      - equpiment-web
+      - equipment-web
+      - main-web
       - api
       - watchman
     volumes:
@@ -18,15 +19,20 @@ services:
       - '443:443'
     restart: always
 
+  main-web:
+    image: ghcr.io/husky-dev/kremen-main-web/app:latest
+    container_name: main-web
+    hostname: main-web
+
   transport-web:
     image: ghcr.io/husky-dev/kremen-transport-web/app:latest
     container_name: transport-web
     hostname: transport-web
 
-  equpiment-web:
-    image: ghcr.io/husky-dev/kremen-equpiment-web/app:latest
-    container_name: equpiment-web
-    hostname: equpiment-web
+  equipment-web:
+    image: ghcr.io/husky-dev/kremen-equipment-web/app:latest
+    container_name: equipment-web
+    hostname: equipment-web
 
   watchman:
     image: ghcr.io/husky-dev/kremen-api/watchman:latest

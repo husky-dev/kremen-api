@@ -1,98 +1,70 @@
 version: '3.7'
 
 services:
-  web-transport:
-    build:
-      context: ./web/transport
-      dockerfile: Dockerfile.dev
-    working_dir: /usr/src/app
-    volumes:
-      - './web/transport:/usr/src/app'
-    environment:
-      PORT: 6001
-    command: 'yarn start:dev'
-    ports:
-      - '6001:6001'
 
-  web-deputies:
-    build:
-      context: ./web/deputies
-      dockerfile: Dockerfile.dev
+  entry:
+    image: ghcr.io/husky-dev/kremen-api/entry:latest
+    container_name: entry
+    hostname: entry
+    depends_on:
+      - transport-web
+      - equpiment-web
+      - api
+      - watchman
     volumes:
-      - './web/deputies:/usr/src/app'
-    environment:
-      PORT: 6002
-    command: 'yarn start:dev'
+      - 'ssl:/etc/letsencrypt'
     ports:
-      - '6002:6002'
+      - '80:80'
+      - '443:443'
+    restart: always
 
-  web-equipment:
-    build:
-      context: ./web/equipment
-      dockerfile: Dockerfile.dev
-    volumes:
-      - './web/equipment:/usr/src/app'
-    environment:
-      PORT: 6003
-    command: 'yarn start:dev'
-    ports:
-      - '6003:6003'
+  transport-web:
+    image: ghcr.io/husky-dev/kremen-transport-web/app:latest
+    container_name: transport-web
+    hostname: transport-web
 
-  api:
-    build:
-      context: ./services/api
-      dockerfile: Dockerfile.dev
-    hostname: api
-    depends_on: 
-      - redis
-    volumes:
-      - './services/api:/usr/src/app'
-    environment:
-      PORT: 8080
-    command: 'yarn start:dev'
-    ports:
-      - '8080:8080'
+  equpiment-web:
+    image: ghcr.io/husky-dev/kremen-equipment-web/app:latest
+    container_name: equipment-web
+    hostname: equipment-web
 
   watchman:
-    build:
-      context: ./services/watchman
-      dockerfile: Dockerfile.dev
+    image: ghcr.io/husky-dev/kremen-api/watchman:latest
+    container_name: watchman
     hostname: watchman
-    depends_on: 
+    depends_on:
       - api
       - mongo
       - redis
-    volumes:
-      - './services/watchman:/usr/src/app'
-    environment:
-      PORT: 8081
-    command: 'yarn start:dev'
-    ports:
-      - '8081:8081'
+    restart: always
+
+  api:
+    image: ghcr.io/husky-dev/kremen-api/api:latest
+    container_name: api
+    hostname: api
+    depends_on: 
+      - redis
+    restart: always
 
   redis:
-    build:
-      context: ./services/redis
-      dockerfile: Dockerfile.dev
+    image: ghcr.io/husky-dev/kremen-api/redis:latest
     container_name: redis
     hostname: redis
-    ports:
-      - '6379:6379'
     volumes:
       - redis:/data
+    restart: always
 
   mongo:
-    build:
-      context: ./services/mongo
-      dockerfile: Dockerfile.dev
+    image: ghcr.io/husky-dev/kremen-api/mongo:latest
     container_name: mongo
     hostname: mongo
-    ports:
-      - '27017:27017'
     volumes:
       - mongo:/data/db
+    restart: always
 
 volumes:
+  ssl:
+    name: ssl
   redis:
     name: redis
   mongo:

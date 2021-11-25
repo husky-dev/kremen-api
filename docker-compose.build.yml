@@ -13,6 +13,11 @@ services:
     build:
       context: ./services/api
       dockerfile: Dockerfile.prd
+
+  transport-api:
+    image: ghcr.io/husky-dev/kremen-api/transport-api:latest
+    build:
+      context: ./services/transport
   
   watchman:
     image: ghcr.io/husky-dev/kremen-api/watchman:latest

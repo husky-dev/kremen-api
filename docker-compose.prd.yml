@@ -8,6 +8,7 @@ services:
     hostname: entry
     depends_on:
       - transport-web
+      - transport-api
       - equipment-web
       - main-web
       - api
@@ -28,6 +29,11 @@ services:
     image: ghcr.io/husky-dev/kremen-transport-web/app:latest
     container_name: transport-web
     hostname: transport-web
+
+  transport-api:
+    image: ghcr.io/husky-dev/kremen-api/transport-api:latest
+    container_name: transport-api
+    hostname: transport-api
 
   equipment-web:
     image: ghcr.io/husky-dev/kremen-equipment-web/app:latest

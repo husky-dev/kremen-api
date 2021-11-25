@@ -1,6 +1,6 @@
 import { compact } from 'lodash';
+import randomcolor from 'randomcolor';
 
-import { defTransportRouteColor, tranpsortRouteColors } from './consts';
 import {
   TransportBus,
   TransportDataSourceBus,
@@ -15,11 +15,16 @@ import {
 
 // Data Source
 
+export const parseDataSourceRoutes = (input: TransportDataSourceRoute[]): TransportRoute[] => {
+  const items = input.map(parseDataSourceRoute);
+  return items;
+};
+
 export const parseDataSourceRoute = (input: TransportDataSourceRoute): TransportRoute => {
   const { busreportRouteId, location, bussesOnRoute, routeName, routeNumber } = input;
   const path = parseLatLngPath(location);
   const type = routeNumberToTransportType(routeNumber);
-  const color = tranpsortRouteColors[routeNumber] || defTransportRouteColor;
+  const color = randomcolor({ seed: routeNumber });
   return {
     rid: busreportRouteId,
     type,

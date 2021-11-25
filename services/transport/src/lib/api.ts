@@ -15,6 +15,7 @@ import {
   TransportStation,
 } from './types';
 import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceRoute, parseDataSourceStation } from './utils';
+import { parseDataSourceRoutes } from '@lib';
 
 const log = Log('@lib');
 
@@ -51,7 +52,7 @@ export const getApi = () => {
     // Routes
 
     const getRoutes = async (): Promise<TransportRoute[]> =>
-      (await apiReq<TransportDataSourceRoute[]>({ path: `/cities/${cityId}/routes` })).map(parseDataSourceRoute);
+      parseDataSourceRoutes(await apiReq<TransportDataSourceRoute[]>({ path: `/cities/${cityId}/routes` }));
 
     const getRoutesWithStations = async (): Promise<TransportRoute[]> => {
       const routes = await getRoutes();

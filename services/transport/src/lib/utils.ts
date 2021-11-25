@@ -1,5 +1,5 @@
 import { compact } from 'lodash';
-import { LatLng } from 'utils';
+import { LatLng } from '@utils';
 import { defTransportRouteColor, tranpsortRouteColors } from './consts';
 
 import {
@@ -54,8 +54,7 @@ export const parseDataSourcePrediction = (input: TransportDataSourcePrediction):
 const routeNumberToTransportType = (val: string): TransportType =>
   /^[TТ]/g.test(val) ? TransportType.Trolleybus : TransportType.Bus;
 
-const busNameToType = (val: string): TransportType =>
-  /^[TТ]/g.test(val) ? TransportType.Trolleybus : TransportType.Bus;
+const busNameToType = (val: string): TransportType => (/^[TТ]/g.test(val) ? TransportType.Trolleybus : TransportType.Bus);
 
 const parseLatLngPath = (val: string): number[][] => {
   if (!val) {

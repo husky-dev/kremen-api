@@ -1,5 +1,20 @@
 /* eslint-disable no-console */
-import { isNum, isStr } from 'utils';
+import { isNum, isStr, isUnknowDict } from '@utils';
+import pckg from '../../package.json';
+
+interface PackageContent {
+  name: string;
+  version: string;
+}
+
+const isPackageContent = (val: unknown): val is PackageContent => isUnknowDict(val) && isStr(val.name) && isStr(val.version);
+
+if (!isPackageContent(pckg)) {
+  console.error(`wrong package.json format`);
+  process.exit(1);
+}
+
+const { name, version } = pckg;
 
 export type ConfigEnv = 'dev' | 'prd';
 
@@ -8,7 +23,7 @@ export type LogLevel = 'none' | 'err' | 'warn' | 'info' | 'debug' | 'trace';
 const isConfigEnv = (val: unknown): val is ConfigEnv => isStr(val) && ['dev', 'prd'].includes(val);
 
 export const getAppEnv = (): ConfigEnv => {
-  const val = process.env.ENV;
+  const val = process.env.NODE_ENV;
   if (isStr(val)) {
     const modStr = val.toLocaleLowerCase().trim();
     if (isConfigEnv(modStr)) {
@@ -18,9 +33,9 @@ export const getAppEnv = (): ConfigEnv => {
   return 'prd';
 };
 
-export const getAppName = () => parseStrParam(NAME, 'moa-api');
+export const getAppName = () => parseStrParamOrExit(name, 'name');
 
-export const getAppVersion = () => parseStrParam(VERSION, '0.0.0');
+export const getAppVersion = () => parseStrParamOrExit(version, 'version');
 
 export const parseNumParam = (val: unknown, def: number): number => {
   if (isNum(val)) {

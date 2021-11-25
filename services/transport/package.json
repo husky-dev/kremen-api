@@ -1,14 +1,22 @@
 {
-  "name": "kremen-api-transport",
+  "name": "@kremen/transport-api",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
+    "start": "yarn start:prd",
     "start:prd": "micro -l tcp://0.0.0.0:${PORT-8080} dist/index.js",
-    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist:dev && yarn micro-dev -p 8080 dist/index.js\"",
-    "dist": "yarn dist:prd",
-    "dist:prd": "rm -rf dist/** && webpack --mode=production",
-    "dist:dev": "rm -rf dist/** && webpack --mode=development"
+    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && NODE_ENV=dev LOG_LEVEL=trace yarn micro-dev -p 8080 dist/index.js\"",
+    "dist": "tsc && tsc-alias",
+    "lint": "yarn lint:types && yarn lint:eslint",
+    "lint:types": "tsc --noEmit --skipLibCheck",
+    "lint:eslint": "eslint \"src/**\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "axios": "0.21.1",
+    "lodash": "4.17.21",
+    "micro": "9.3.4"
   },
   "devDependencies": {
     "@types/lodash": "4.14.171",
@@ -18,16 +26,8 @@
     "eslint": "7.31.0",
     "micro-dev": "3.0.0",
     "nodemon": "2.0.12",
-    "ts-loader": "9.2.4",
-    "tsconfig-paths-webpack-plugin": "3.5.1",
-    "typescript": "4.3.5",
-    "webpack": "5.47.1",
-    "webpack-cli": "4.7.2",
-    "webpack-node-externals": "3.0.0"
-  },
-  "dependencies": {
-    "axios": "0.21.1",
-    "lodash": "4.17.21",
-    "micro": "9.3.4"
+    "prettier": "2.4.1",
+    "tsc-alias": "1.4.1",
+    "typescript": "4.3.5"
   }
 }

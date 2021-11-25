@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { config, LogLevel } from 'config';
-import { select } from 'utils';
+import { config, LogLevel } from '@config';
+import { select } from '@utils';
 
 const logLevelToNum = (val: LogLevel): number =>
   select(val, {

@@ -1,7 +1,7 @@
 FROM node:14-alpine3.10 AS builder
 
 WORKDIR /usr/src/app
-COPY package.json yarn.lock webpack.config.js tsconfig.json ./
+COPY package.json yarn.lock tsconfig.json ./
 RUN yarn install
 COPY src ./src
 RUN yarn dist
@@ -15,7 +15,7 @@ EXPOSE 8080
 WORKDIR /usr/src/app
 
 COPY package.json yarn.lock ./
-RUN NOYARNPOSTINSTALL=1 yarn install --production
+RUN yarn install --production
 COPY --from=builder /usr/src/app/dist ./dist
 
-CMD ["yarn", "start:prd"]
+CMD ["yarn", "start"]

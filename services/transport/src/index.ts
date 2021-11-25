@@ -1,20 +1,14 @@
+import { config } from '@config';
+import { Log } from '@core';
+import { getApi, TransportCity } from '@lib';
+import { errToStr, HttpQs, isStr, parseIdsStr, sendInternalServerErr, sendNotFoundErr, sendOk } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
-import { getApi } from 'lib';
-import { send } from 'micro';
-import { errToStr, HttpQs, isStr, parseIdsStr } from 'utils';
 import url from 'url';
 
-const sendOk = (res: ServerResponse, data: unknown) => send(res, 200, data);
+const log = Log('tranposrt');
+log.info('config', config);
 
-const sendErr = (res: ServerResponse, code: number, message: string) => send(res, code, { error: message });
-
-const sendNotFoundErr = (res: ServerResponse, message: string = 'Not found') => sendErr(res, 404, message);
-
-const sendInternalServerErr = (res: ServerResponse, message: string = 'Internal server error') => sendErr(res, 500, message);
-
-// Handlers
-
-const api = getApi().withCity();
+const api = getApi().withCity(TransportCity.Kremenchuk);
 
 const handleRoutes = async (res: ServerResponse) => {
   const data = await api.getRoutesWithStations();

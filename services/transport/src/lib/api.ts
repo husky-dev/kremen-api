@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Log } from 'core';
+import { Log } from '@core';
 import { flatten } from 'lodash';
-import { errToStr, HttpQs, LatLng } from 'utils';
+import { errToStr, HttpQs, LatLng } from '@utils';
 
 import {
   TransportBus,
@@ -16,7 +16,7 @@ import {
 } from './types';
 import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceRoute, parseDataSourceStation } from './utils';
 
-const log = Log('lib');
+const log = Log('@lib');
 
 interface TranportApiReqOpt {
   path: string;
@@ -45,7 +45,7 @@ export const getApi = () => {
 
   const getCitites = async (countryId: TransportCountry) => apiReq({ path: `/countries/${countryId}/cities` });
 
-  const withCity = (cityId: TransportCity = TransportCity.Kremenchuk) => {
+  const withCity = (cityId: TransportCity) => {
     const getCity = async () => apiReq({ path: `/cities/${cityId}` });
 
     // Routes

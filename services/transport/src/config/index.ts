@@ -16,7 +16,7 @@ export const config: Config = {
   version: getAppVersion(),
   port: parseNumParam(process.env.PORT, 8080),
   log: {
-    level: parseLogLevelParam(process.env.LOG_LEVEL, 'err'),
+    level: parseLogLevelParam(process.env.LOG_LEVEL, 'info'),
   },
 };
 

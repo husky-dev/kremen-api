@@ -16,9 +16,9 @@ export const parseIdsStr = (val: string): number[] =>
 
 // Responses
 
-export const sendOk = <D = unknown>(res: ServerResponse, data: D) => send(res, 200, data);
+export const sendOk = <D = unknown>(res: ServerResponse, data: D) => sendWithHeaders(res, 200, data);
 
-export const sendErr = (res: ServerResponse, code: number, message: string) => send(res, code, { error: message });
+export const sendErr = (res: ServerResponse, code: number, message: string) => sendWithHeaders(res, code, { error: message });
 
 export const sendNotFoundErr = (res: ServerResponse, message: string = 'Not found') => sendErr(res, 404, message);
 
@@ -28,3 +28,9 @@ export const sendWrongFormatErr = (res: ServerResponse, name: string) => sendErr
 
 export const sendInternalServerErr = (res: ServerResponse, message: string = 'Internal server error') =>
   sendErr(res, 500, message);
+
+const sendWithHeaders = (res: ServerResponse, code: number, data?: unknown) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
+  send(res, code, data);
+};

@@ -8,6 +8,7 @@ services:
     hostname: entry
     depends_on:
       - transport-web
+      - transport-api
       - equpiment-web
       - api
       - watchman

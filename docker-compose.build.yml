@@ -18,6 +18,11 @@ services:
     image: ghcr.io/husky-dev/kremen-api/transport-api:latest
     build:
       context: ./services/transport
+
+  equipment-api:
+    image: ghcr.io/husky-dev/kremen-api/equipment-api:latest
+    build:
+      context: ./services/equipment
   
   watchman:
     image: ghcr.io/husky-dev/kremen-api/watchman:latest

@@ -1,7 +1,8 @@
-import axios from 'axios';
 import { Log } from '@core';
-import { flatten } from 'lodash';
+import { parseDataSourceRoutes } from '@lib';
 import { errToStr, HttpQs, LatLng } from '@utils';
+import axios from 'axios';
+import { flatten } from 'lodash';
 
 import {
   TransportBus,
@@ -14,8 +15,7 @@ import {
   TransportRoute,
   TransportStation,
 } from './types';
-import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceRoute, parseDataSourceStation } from './utils';
-import { parseDataSourceRoutes } from '@lib';
+import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceStation } from './utils';
 
 const log = Log('@lib');
 
@@ -127,6 +127,5 @@ export const getApi = () => {
   return { getCountries, getCitites, withCity };
 };
 
-export * from './consts';
 export * from './types';
 export * from './utils';

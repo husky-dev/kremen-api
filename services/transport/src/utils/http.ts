@@ -16,7 +16,7 @@ export const parseIdsStr = (val: string): number[] =>
 
 // Responses
 
-export const sendOk = (res: ServerResponse, data: unknown) => send(res, 200, data);
+export const sendOk = <D = unknown>(res: ServerResponse, data: D) => send(res, 200, data);
 
 export const sendErr = (res: ServerResponse, code: number, message: string) => send(res, code, { error: message });
 

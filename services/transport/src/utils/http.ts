@@ -22,5 +22,9 @@ export const sendErr = (res: ServerResponse, code: number, message: string) => s
 
 export const sendNotFoundErr = (res: ServerResponse, message: string = 'Not found') => sendErr(res, 404, message);
 
+export const sendParamMissedErr = (res: ServerResponse, name: string) => sendErr(res, 422, `"${name}" param missed`);
+
+export const sendWrongFormatErr = (res: ServerResponse, name: string) => sendErr(res, 422, `Wrong "${name}" format`);
+
 export const sendInternalServerErr = (res: ServerResponse, message: string = 'Internal server error') =>
   sendErr(res, 500, message);

@@ -1,15 +1,14 @@
 import { compact } from 'lodash';
-import { LatLng } from '@utils';
-import { defTransportRouteColor, tranpsortRouteColors } from './consts';
 
+import { defTransportRouteColor, tranpsortRouteColors } from './consts';
 import {
   TransportBus,
   TransportDataSourceBus,
   TransportDataSourcePrediction,
+  TransportDataSourceRoute,
   TransportDataSourceStation,
   TransportPrediction,
   TransportRoute,
-  TransportDataSourceRoute,
   TransportStation,
   TransportType,
 } from './types';
@@ -74,21 +73,4 @@ const parseLatLngPath = (val: string): number[][] => {
       return [parseFloat(latStr), parseFloat(lngStr)];
     }),
   );
-};
-
-export const strToLatLng = (val: string): LatLng | undefined => {
-  if (!val) {
-    return undefined;
-  }
-  const parts = val.split(',');
-  if (parts.length !== 2) return undefined;
-  const lat = parseFloat(parts[0]);
-  if (isNaN(lat)) {
-    return undefined;
-  }
-  const lng = parseFloat(parts[1]);
-  if (isNaN(lng)) {
-    return undefined;
-  }
-  return { lat, lng };
 };

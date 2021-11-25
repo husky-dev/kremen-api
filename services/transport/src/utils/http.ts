@@ -6,7 +6,7 @@ export interface HttpQs {
   [key: string]: string | string[] | undefined;
 }
 
-export const parseIdsStr = (val: string): number[] =>
+export const parseQueryIdsParam = (val: string): number[] =>
   compact(
     val.split(',').map(item => {
       const val = parseInt(item, 10);

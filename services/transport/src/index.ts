@@ -5,7 +5,7 @@ import {
   errToStr,
   HttpQs,
   isStr,
-  parseIdsStr,
+  parseQueryIdsParam,
   sendInternalServerErr,
   sendNotFoundErr,
   sendOk,
@@ -27,7 +27,7 @@ const handleRoutes = async (res: ServerResponse) => {
 };
 
 const handleBuses = async (res: ServerResponse, query: HttpQs) => {
-  const rids = isStr(query.rids) ? parseIdsStr(query.rids) : undefined;
+  const rids = isStr(query.rids) ? parseQueryIdsParam(query.rids) : undefined;
   const data = await api.getRoutesBuses(rids);
   return sendOk(res, data);
 };
@@ -53,7 +53,7 @@ const handleFind = async (res: ServerResponse, query: HttpQs) => {
 };
 
 const handleBusesStations = async (res: ServerResponse, query: HttpQs) => {
-  const rids = isStr(query.rids) ? parseIdsStr(query.rids) : undefined;
+  const rids = isStr(query.rids) ? parseQueryIdsParam(query.rids) : undefined;
   const data = await api.getRoutesStations(rids);
   return sendOk(res, data);
 };

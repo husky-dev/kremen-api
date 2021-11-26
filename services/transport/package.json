@@ -6,7 +6,7 @@
   "scripts": {
     "start": "yarn start:prd",
     "start:prd": "micro -l tcp://0.0.0.0:${PORT-8080} dist/index.js",
-    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && NODE_ENV=dev LOG_LEVEL=trace yarn micro-dev -p 8080 dist/index.js\"",
+    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && NODE_ENV=dev LOG_LEVEL=trace yarn micro-dev -p 8080 -s dist/index.js\"",
     "dist": "tsc && tsc-alias",
     "lint": "yarn lint:types && yarn lint:eslint",
     "lint:types": "tsc --noEmit --skipLibCheck",

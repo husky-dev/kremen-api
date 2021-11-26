@@ -1,13 +1,12 @@
 import { Log } from '@core';
-import { EquipmentMachineType } from './types';
+import { EquipmentDataSourceTimeEntryData, EquipmentMachine } from '@lib';
 import { errToStr } from '@utils';
 import axios from 'axios';
 import { compact, maxBy } from 'lodash';
 import md5 from 'md5';
 import randomcolor from 'randomcolor';
 
-import { DataSourceCar } from './types';
-import { DataSourceEquipmentTimeEntryData, EquipmentMachine } from '@lib';
+import { EquipmentDataSourceCar, EquipmentMachineType } from './types';
 
 const log = Log('equipment.api');
 
@@ -17,20 +16,32 @@ const getEquipmentList = async () => {
   const coords = await api.getCoordinates(gspIds);
   const equipment: EquipmentMachine[] = [];
   for (let i = 0; i < cars.length; i++) {
-    const { gps, image, ...car } = cars[i];
-
-    const eid = car.name ? md5(car.name).substr(0, 10) : 'empty';
-    const color = randomcolor({ seed: eid });
-    const machineType = getMachineTypeFromStr(car.type);
+    const car = cars[i];
     const coordsLog = coords[i];
     const lastRecord = maxBy(coordsLog, 'ts');
 
-    equipment.push({ eid, ...car, type: machineType, color, log: coordsLog || [], ...(lastRecord ? lastRecord : {}) });
+    const machine: EquipmentMachine = {
+      eid: car.name ? md5(car.name).substr(0, 10) : 'empty',
+      name: car.name,
+      company: car.company,
+      comments: car.comments ? car.comments : undefined,
+      color: machineCompanyNameToColor(car.company),
+      type: machineNameToType(car.type),
+      log: coordsLog,
+    };
+    if (lastRecord) {
+      machine.lat = lastRecord.lat;
+      machine.lng = lastRecord.lng;
+      machine.speed = lastRecord.speed;
+      machine.ts = lastRecord.ts;
+      machine.acsel = lastRecord.acsel;
+    }
+    equipment.push(machine);
   }
   return equipment;
 };
 
-const getCars = async (): Promise<DataSourceCar[]> => {
+const getCars = async (): Promise<EquipmentDataSourceCar[]> => {
   const url = 'http://admin.logistika.org.ua:1999/getcars';
   try {
     const { data } = await axios({ url, method: 'GET' });
@@ -56,7 +67,7 @@ const parseCoordinatesResp = (data: string) => {
   return items.map(parseCoordinateLineResp);
 };
 
-const parseCoordinateLineResp = (data: string): DataSourceEquipmentTimeEntryData[] | undefined => {
+const parseCoordinateLineResp = (data: string): EquipmentDataSourceTimeEntryData[] | undefined => {
   if (!data) return undefined;
   const parts = data.split('|');
   if (!parts.length) {
@@ -97,6 +108,7 @@ interface DataSourceEquipmentRawTimeEntryData {
 }
 
 const parseCoordinatesEntry = (str: string): DataSourceEquipmentRawTimeEntryData | undefined => {
+  if (!str) return undefined;
   const parts = str.split(';');
   if (parts.length < 3) {
     log.err('parsing coordinates entry error', { str });
@@ -155,25 +167,36 @@ const parseCoordinatesEntry = (str: string): DataSourceEquipmentRawTimeEntryData
   return data;
 };
 
-const getMachineTypeFromStr = (rawVal: string): EquipmentMachineType => {
+const machineNameToType = (rawVal: string): EquipmentMachineType => {
   if (!rawVal) {
     return 'unknow';
   }
   const val = rawVal.trim().toLocaleLowerCase();
-  if (val === 'трактори') {
-    return 'tractor';
-  }
-  if (val === 'снігоприбиральники') {
-    return 'sweeper';
-  }
-  if (val === 'посипальники') {
-    return 'spreader';
-  }
-  if (val === 'сміттєвози') {
-    return 'garbageTruck';
+  switch (val) {
+    case 'трактори':
+      return 'tractor';
+    case 'снігоприбиральники':
+      return 'sweeper';
+    case 'посипальники':
+      return 'spreader';
+    case 'сміттєвози':
+      return 'garbage';
   }
   log.warn('unknow machine type', { val: rawVal });
   return 'unknow';
+};
+
+const machineCompanyNameToColor = (company: string) => {
+  const colormap: Record<string, string> = {
+    'Кременчуцьке КАТП 1628': '#4AB19D',
+    'КПС ШРБУ': '#E0535D',
+    Теплоенерго: '#F7BB43',
+    'Благоустрій Кременчука': '#7277D5',
+    КРЕМЕНЧУКВОДОКАНАЛ: '#2961DC',
+  };
+  const color = colormap[company];
+  if (!color) log.warn('no color found for company', { company });
+  return color ? color : randomcolor({ seed: company });
 };
 
 export const api = { getCars, getCoordinates, getEquipmentList };

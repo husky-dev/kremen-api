@@ -1,4 +1,4 @@
-export interface DataSourceCar {
+export interface EquipmentDataSourceCar {
   name: string;
   company: string;
   type: string;
@@ -7,7 +7,7 @@ export interface DataSourceCar {
   comments: string;
 }
 
-export interface DataSourceEquipmentTimeEntryData {
+export interface EquipmentDataSourceTimeEntryData {
   ts: number;
   lat: number;
   lng: number;
@@ -18,22 +18,19 @@ export interface DataSourceEquipmentTimeEntryData {
   speed?: number;
 }
 
-export type EquipmentMachineType = 'tractor' | 'sweeper' | 'spreader' | 'garbageTruck' | 'unknow';
+export type EquipmentMachineType = 'tractor' | 'sweeper' | 'spreader' | 'garbage' | 'unknow';
 
 export interface EquipmentMachine {
   eid: string;
   name: string;
   company: string;
   type: EquipmentMachineType;
-  comments: string;
+  comments?: string;
   color: string;
   lat?: number;
   lng?: number;
   speed?: number;
-  ts?: number;
-  accV?: number;
-  satCount?: number;
-  zajig?: number;
   acsel?: number;
-  log: DataSourceEquipmentTimeEntryData[];
+  ts?: number;
+  log?: EquipmentDataSourceTimeEntryData[];
 }

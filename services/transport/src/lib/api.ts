@@ -29,7 +29,7 @@ export const getApi = () => {
     try {
       const defQs = { lang: 'ru' };
       const reqQs = qs ? { ...defQs, ...qs } : defQs;
-      const url = `http://infobus.kz${path}`;
+      const url = `https://infobus.kz${path}`;
       log.debug('api req', { url, qs });
       const { data } = await axios({ url, params: reqQs });
       return data;

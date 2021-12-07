@@ -39,7 +39,7 @@ RUN apt-get update \
   && make install \
   \
   && rm -rf /nginx-1.21.4 \
-  && rm -rf /ngx_http_redis
+  && rm -rf /ngx_http_redis-0.3.9
 
 COPY nginx.conf /etc/nginx/nginx.conf
 

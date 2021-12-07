@@ -8,25 +8,51 @@ services:
     container_name: entry
     hostname: entry
     depends_on:
-      # - transport-api
-      # - equipment-api
+      - transport-api
+      - equipment-api
+      - api
+      # - watchman
       - redis
-      - mongo
     volumes:
       - ./services/entry/conf/development:/etc/nginx/conf.d
     ports:
       - '80:80'
-      - '8081:8081'
 
-  # transport-api:
-  #   image: node:14-alpine3.10
-  #   container_name: transport-api
-  #   hostname: transport-api
+  transport-api:
+    image: node:14-alpine3.10
+    container_name: transport-api
+    hostname: transport-api
+    working_dir: '/usr/src/app'
+    volumes:
+      - './services/transport:/usr/src/app'
+    command: 'yarn start:dev'
 
-  # equipment-api:
-  #   image: node:14-alpine3.10
-  #   container_name: equipment-api
-  #   hostname: equipment-api
+  equipment-api:
+    image: node:14-alpine3.10
+    container_name: equipment-api
+    hostname: equipment-api
+    working_dir: '/usr/src/app'
+    volumes:
+      - './services/equipment:/usr/src/app'
+    command: 'yarn start:dev'
+
+  # watchman:
+  #   image: ghcr.io/husky-dev/kremen-api/watchman:latest
+  #   container_name: watchman
+  #   hostname: watchman
+  #   depends_on:
+  #     - api
+  #     - mongo
+  #     - redis
+  #   restart: always
+
+  api:
+    image: ghcr.io/husky-dev/kremen-api/api:latest
+    container_name: api
+    hostname: api
+    depends_on: 
+      - redis
+    restart: always
 
   redis:
     image: redis:6.0-alpine

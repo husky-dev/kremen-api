@@ -17,7 +17,7 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
   const { pathname = '' } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
   try {
-    if (req.method === 'GET' && pathname === '/') return handleList(res);
+    if (req.method === 'GET' && pathname === '/equipment') return handleList(res);
     // Default respond
     return sendNotFoundErr(res, 'Endpoint not found');
   } catch (err: unknown) {

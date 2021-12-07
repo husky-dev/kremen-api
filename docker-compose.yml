@@ -65,7 +65,7 @@ services:
     restart: always
 
   redis:
-    image: ghcr.io/husky-dev/kremen-api/redis:latest
+    image: redis:6.0-alpine
     container_name: redis
     hostname: redis
     volumes:
@@ -73,7 +73,7 @@ services:
     restart: always
 
   mongo:
-    image: ghcr.io/husky-dev/kremen-api/mongo:latest
+    image: mongo:4.4
     container_name: mongo
     hostname: mongo
     volumes:

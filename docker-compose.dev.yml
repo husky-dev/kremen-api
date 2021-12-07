@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+
+  entry:
+    build:
+      context: ./services/entry
+    container_name: entry
+    hostname: entry
+    depends_on:
+      # - transport-api
+      # - equipment-api
+      - redis
+      - mongo
+    volumes:
+      - ./services/entry/conf/development:/etc/nginx/conf.d
+    ports:
+      - '80:80'
+      - '8081:8081'
+
+  # transport-api:
+  #   image: node:14-alpine3.10
+  #   container_name: transport-api
+  #   hostname: transport-api
+
+  # equipment-api:
+  #   image: node:14-alpine3.10
+  #   container_name: equipment-api
+  #   hostname: equipment-api
+
+  redis:
+    image: redis:6.0-alpine
+    container_name: redis
+    hostname: redis
+    volumes:
+      - redis:/data
+
+  mongo:
+    image: mongo:4.4
+    container_name: mongo
+    hostname: mongo
+    volumes:
+      - mongo:/data/db
+
+volumes:
+  redis:
+    name: redis
+  mongo:
+    name: mongo

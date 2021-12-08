@@ -19,7 +19,6 @@ Sentry.init({
 
 const handleList = async (res: ServerResponse) => {
   const data = await api.getEquipmentList();
-  log.warn('list req');
   return sendOk(res, data);
 };
 

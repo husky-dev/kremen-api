@@ -62,6 +62,7 @@ services:
     environment:
       - NODE_ENV=development
       - LOG_LEVEL=debug
+      - SENTRY_DSN=$WATCHMAN_API_SENTRY_DSN
     command: 'yarn start:dev'
 
   redis:

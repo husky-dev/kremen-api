@@ -7,6 +7,7 @@ import {
   parseLogLevelParam,
   parseNumParam,
   parseStrParam,
+  parseStrParamOrExit,
 } from './utils';
 
 interface Config {
@@ -16,6 +17,9 @@ interface Config {
   port: number;
   log: {
     level: LogLevel;
+  };
+  sentry: {
+    dsn: string;
   };
   mongodb: {
     host: string;
@@ -38,6 +42,9 @@ export const config: Config = {
   port: parseNumParam(process.env.PORT, 8080),
   log: {
     level: parseLogLevelParam(process.env.LOG_LEVEL, 'info'),
+  },
+  sentry: {
+    dsn: parseStrParamOrExit(process.env.SENTRY_DSN, 'SENTRY_DSN'),
   },
   mongodb: {
     host: parseStrParam(process.env.MONGODB_HOST, 'mongo'),

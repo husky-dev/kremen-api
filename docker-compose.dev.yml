@@ -11,7 +11,7 @@ services:
       - transport-api
       - equipment-api
       - api
-      # - watchman
+      - watchman
       - redis
     volumes:
       - ./services/entry/conf/development:/etc/nginx/conf.d
@@ -25,6 +25,9 @@ services:
     working_dir: '/usr/src/app'
     volumes:
       - './services/transport:/usr/src/app'
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
     command: 'yarn start:dev'
 
   equipment-api:
@@ -34,17 +37,28 @@ services:
     working_dir: '/usr/src/app'
     volumes:
       - './services/equipment:/usr/src/app'
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
     command: 'yarn start:dev'
 
-  # watchman:
-  #   image: ghcr.io/husky-dev/kremen-api/watchman:latest
-  #   container_name: watchman
-  #   hostname: watchman
-  #   depends_on:
-  #     - api
-  #     - mongo
-  #     - redis
-  #   restart: always
+  watchman:
+    image: node:14-alpine3.10
+    container_name: watchman
+    hostname: watchman
+    working_dir: '/usr/src/app'
+    volumes:
+      - './services/watchman:/usr/src/app'
+    depends_on:
+      - api
+      - transport-api
+      - equipment-api
+      - mongo
+      - redis
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+    command: 'yarn start:dev'
 
   api:
     image: ghcr.io/husky-dev/kremen-api/api:latest
@@ -58,6 +72,8 @@ services:
     image: redis:6.0-alpine
     container_name: redis
     hostname: redis
+    ports:
+      - '6379:6379'
     volumes:
       - redis:/data
 
@@ -65,6 +81,8 @@ services:
     image: mongo:4.4
     container_name: mongo
     hostname: mongo
+    ports:
+      - '27017:27017'
     volumes:
       - mongo:/data/db
 

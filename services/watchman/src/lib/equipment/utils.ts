@@ -1,5 +1,5 @@
-import { EquipmentMachine } from '@kremen/types';
-import { getObjectsDiff } from 'utils';
+import { EquipmentMachine } from './types';
+import { getObjectsDiff } from '@utils';
 
 export const getEquipmentMachineDiff = (
   prev: EquipmentMachine[],

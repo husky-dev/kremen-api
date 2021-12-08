@@ -26,6 +26,18 @@ services:
     container_name: main-web
     hostname: main-web
 
+  watchman:
+    image: ghcr.io/husky-dev/kremen-api/watchman:latest
+    container_name: watchman
+    hostname: watchman
+    depends_on:
+      - api
+      - transport-api
+      - equipment-api
+      - mongo
+      - redis
+    restart: always
+
   transport-web:
     image: ghcr.io/husky-dev/kremen-transport-web/app:latest
     container_name: transport-web
@@ -45,16 +57,6 @@ services:
     image: ghcr.io/husky-dev/kremen-api/equipment-api:latest
     container_name: equipment-api
     hostname: equipment-api
-
-  watchman:
-    image: ghcr.io/husky-dev/kremen-api/watchman:latest
-    container_name: watchman
-    hostname: watchman
-    depends_on:
-      - api
-      - mongo
-      - redis
-    restart: always
 
   api:
     image: ghcr.io/husky-dev/kremen-api/api:latest

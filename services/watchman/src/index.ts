@@ -1,60 +1,51 @@
-import { envToApiRoot } from 'core';
+import { config } from '@config';
+import { initMongoClient, initRedisClient } from '@core';
+import { initEquipmentWatcher, initTransprotWatcher } from '@lib';
+import { errToStr, Log } from '@utils';
 import http from 'http';
-import { Db, MongoClient } from 'mongodb';
-import { initEquipmentWatcher, initTransprotWatcher } from 'services';
 import url from 'url';
-import { getEnvPort, getNodeEnv, Log } from 'utils';
 import WebSocket from 'ws';
 
-const log = Log('watchman');
+const log = Log('app');
 
-const port = getEnvPort();
-const env = getNodeEnv();
-
-// DB
-
-const initMongoClient = (cb: (db: Db) => void) => {
-  const mognoUrl = 'mongodb://mongo:27017';
-  log.info(`connecting to mongo, url=${mognoUrl}`);
-  MongoClient.connect(mognoUrl, (err, client) => {
-    if (err) {
-      log.info('connecting to mongo err=', err.message);
-      process.exit(1);
-    }
-    log.info(`connecting to mongo done`);
-    const db = client.db('kremen');
-    cb(db);
-  });
-};
-
-// WSS
+log.info('config', config);
 
 const server = http.createServer();
-const apiRoot = envToApiRoot(env);
 
-initMongoClient(db => {
-  const wssTransport = new WebSocket.Server({ noServer: true });
-  initTransprotWatcher({ apiRoot, wss: wssTransport, db });
+const init = async () => {
+  try {
+    const mongo = await initMongoClient();
+    const redis = await initRedisClient();
 
-  const wssEqipment = new WebSocket.Server({ noServer: true });
-  initEquipmentWatcher({ apiRoot, wss: wssEqipment, db });
+    const wssTransport = new WebSocket.Server({ noServer: true });
+    initTransprotWatcher({ wss: wssTransport, mongo, redis });
 
-  server.on('upgrade', (request, socket, head) => {
-    const pathname = url.parse(request.url).pathname;
+    const wssEqipment = new WebSocket.Server({ noServer: true });
+    initEquipmentWatcher({ wss: wssEqipment, mongo, redis });
 
-    if (pathname === '/transport/realtime') {
-      wssTransport.handleUpgrade(request, socket, head, ws => {
-        wssTransport.emit('connection', ws, request);
-      });
-    } else if (pathname === '/equipment/realtime') {
-      wssEqipment.handleUpgrade(request, socket, head, ws => {
-        wssEqipment.emit('connection', ws, request);
-      });
-    } else {
-      socket.destroy();
-    }
-  });
+    server.on('upgrade', (request, socket, head) => {
+      if (!request.url) return;
+      const pathname = url.parse(request.url).pathname;
 
-  log.info(`statting wss, port=${port}, env=${env}`);
-  server.listen(port);
-});
+      if (pathname === '/transport/realtime') {
+        wssTransport.handleUpgrade(request, socket, head, ws => {
+          wssTransport.emit('connection', ws, request);
+        });
+      } else if (pathname === '/equipment/realtime') {
+        wssEqipment.handleUpgrade(request, socket, head, ws => {
+          wssEqipment.emit('connection', ws, request);
+        });
+      } else {
+        socket.destroy();
+      }
+    });
+
+    log.info(`statting wss, port=${config.port}, env=${config.env}`);
+    server.listen(config.port);
+  } catch (err: unknown) {
+    log.err('init err', { err: errToStr(err) });
+    process.exit(1);
+  }
+};
+
+init();

@@ -1,4 +1,4 @@
-import { Log } from '@utils';
+import { Log } from '@core';
 import axios from 'axios';
 
 import { EquipmentMachine } from './types';

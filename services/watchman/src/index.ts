@@ -1,12 +1,10 @@
 import { config } from '@config';
-import { initMongoClient, initRedisClient } from '@core';
+import { initMongoClient, initRedisClient, log } from '@core';
 import { initEquipmentWatcher, initTransprotWatcher } from '@lib';
-import { errToStr, Log } from '@utils';
+import { errToStr } from '@utils';
 import http from 'http';
 import url from 'url';
 import WebSocket from 'ws';
-
-const log = Log('app');
 
 log.info('config', config);
 

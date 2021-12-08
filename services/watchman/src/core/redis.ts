@@ -1,5 +1,6 @@
 import { config } from '@config';
-import { errToStr, Log } from '@utils';
+import { Log } from '@core';
+import { errToStr } from '@utils';
 import { createClient } from 'redis';
 
 const log = Log('reids');

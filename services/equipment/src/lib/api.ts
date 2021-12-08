@@ -8,7 +8,7 @@ import randomcolor from 'randomcolor';
 
 import { EquipmentDataSourceCar, EquipmentMachineType } from './types';
 
-const log = Log('equipment.api');
+const log = Log('lib');
 
 const getEquipmentList = async () => {
   const cars = await api.getCars();

@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import { config, LogLevel } from '@config';
+import * as Sentry from '@sentry/node';
+import { CaptureContext } from '@sentry/types';
 import { select } from '@utils';
 
 const logLevelToNum = (val: LogLevel): number =>
@@ -49,8 +51,15 @@ export const Log = (m?: string) => {
   };
 
   return {
-    err: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'err' }),
-    warn: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'warn' }),
+    err: (msg: string, meta?: unknown) => {
+      logWithOpt({ msg, meta, level: 'err' });
+    },
+    warn: (msg: string, meta?: unknown) => {
+      const metaStr = meta ? `, ${JSON.stringify(meta)}` : '';
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      Sentry.captureMessage(`${msg}${metaStr}`, 'warning' as CaptureContext);
+      logWithOpt({ msg, meta, level: 'warn' });
+    },
     info: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'info' }),
     debug: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'debug' }),
     trace: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'trace' }),

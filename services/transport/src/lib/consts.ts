@@ -5,7 +5,9 @@ const log = Log('transport.consts');
 export const routeColors: Record<string, string> = {
   '1': '#6B7A89',
   '10': '#4AB19D',
+  '10A': '#2961DC',
   '11': '#475C7A',
+  '117': '#A13B32',
   '12': '#B2C253',
   '13': '#C72C41',
   '15-б': '#E0535D',
@@ -25,8 +27,6 @@ export const routeColors: Record<string, string> = {
   'T11A+': '#9ED8EE',
   'T26A+': '#6B7A89',
   'T28A+': '#CB4942',
-  '117': '#A13B32',
-  '10A': '#2961DC',
   'T5A+': '#D5AA00',
   'А 25': '#89A1E2',
   'Т 1': '#E0535D',
@@ -34,7 +34,8 @@ export const routeColors: Record<string, string> = {
   'Т 2': '#449BB8',
   'Т 5': '#E67E23',
   'Т 6': '#A7B23C',
-  'Т 7': '#E67E23',
+  'Т 7': '#C1D98B',
+  Т15Б: '#7FC592',
   Т3Б: '#8E44AD',
   Т3Д: '#F0C40B',
 };

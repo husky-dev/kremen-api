@@ -91,7 +91,6 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
       requestPath: pathname,
     },
   });
-  Sentry.addBreadcrumb;
 
   try {
     if (req.method === 'GET' && pathname === '/transport/routes') {

@@ -25,11 +25,20 @@ const handleList = async (res: ServerResponse) => {
 export default async (req: IncomingMessage, res: ServerResponse) => {
   const { pathname = '' } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
+  const transaction = Sentry.startTransaction({
+    name: 'request',
+    metadata: {
+      requestPath: pathname,
+    },
+  });
   try {
     if (req.method === 'GET' && pathname === '/equipment') return handleList(res);
     // Default respond
     return sendNotFoundErr(res, 'Endpoint not found');
   } catch (err: unknown) {
+    Sentry.captureException(err);
     return sendInternalServerErr(res, errToStr(err));
+  } finally {
+    transaction.finish();
   }
 };

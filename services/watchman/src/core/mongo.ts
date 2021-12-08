@@ -1,5 +1,5 @@
 import { config } from '@config';
-import { Log } from '@core';
+import { Log } from './log';
 import { Db, MongoClient } from 'mongodb';
 
 const log = Log('mongo');

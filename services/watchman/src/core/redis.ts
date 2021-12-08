@@ -1,5 +1,5 @@
 import { config } from '@config';
-import { Log } from '@core';
+import { Log } from './log';
 import { errToStr } from '@utils';
 import { createClient } from 'redis';
 

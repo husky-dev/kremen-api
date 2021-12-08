@@ -16,11 +16,11 @@ if (!isPackageContent(pckg)) {
 
 const { name, version } = pckg;
 
-export type ConfigEnv = 'dev' | 'prd';
+export type ConfigEnv = 'development' | 'production';
 
 export type LogLevel = 'none' | 'err' | 'warn' | 'info' | 'debug' | 'trace';
 
-const isConfigEnv = (val: unknown): val is ConfigEnv => isStr(val) && ['dev', 'prd'].includes(val);
+const isConfigEnv = (val: unknown): val is ConfigEnv => isStr(val) && ['development', 'production'].includes(val);
 
 export const getAppEnv = (): ConfigEnv => {
   const val = process.env.NODE_ENV;
@@ -30,7 +30,7 @@ export const getAppEnv = (): ConfigEnv => {
       return modStr;
     }
   }
-  return 'prd';
+  return 'production';
 };
 
 export const getAppName = () => parseStrParamOrExit(name, 'name');

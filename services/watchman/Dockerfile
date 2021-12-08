@@ -1,7 +1,7 @@
 FROM node:14-alpine3.10 AS builder
 
 WORKDIR /usr/src/app
-COPY package.json yarn.lock webpack.config.js tsconfig.json ./
+COPY package.json yarn.lock tsconfig.json ./
 RUN yarn install
 COPY src ./src
 RUN yarn dist

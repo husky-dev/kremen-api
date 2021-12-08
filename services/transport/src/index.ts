@@ -24,8 +24,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
   environment: config.env,
   debug: config.env === 'development' ? true : false,
-  release: `${config.name}@${config.version}`,
-  serverName: config.name,
+  release: `${config.name.replace('@kremen/', '')}@${config.version}`,
   integrations: [new Sentry.Integrations.Http({ tracing: true })],
 });
 
@@ -33,6 +32,7 @@ const api = getApi().withCity(TransportCity.Kremenchuk);
 
 const handleRoutes = async (res: ServerResponse) => {
   const data = await api.getRoutesWithStations();
+  log.warn('Routes called');
   return sendOk(res, data);
 };
 

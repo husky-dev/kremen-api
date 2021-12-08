@@ -53,6 +53,7 @@ services:
     environment:
       - NODE_ENV=production
       - LOG_LEVEL=info
+      - SENTRY_DSN=$TRANSPORT_API_SENTRY_DSN
     restart: always
 
   equipment-web:

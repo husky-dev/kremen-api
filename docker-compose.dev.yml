@@ -26,7 +26,10 @@ services:
       - './services/transport:/usr/src/app'
     environment:
       - NODE_ENV=development
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=trace
+      - SENTRY_DSN=$TRANSPORT_API_SENTRY_DSN
+    ports:
+      - '8080:8080'
     command: 'yarn start:dev'
 
   equipment-api:

@@ -1,6 +1,6 @@
 FROM debian:latest
 
-LABEL org.opencontainers.image.source https://github.com/husky-dev/smartapp-api
+LABEL org.opencontainers.image.source https://github.com/husky-dev/kremen-api
 
 RUN apt-get update \
   && apt-get install -y wget build-essential zlib1g-dev libpcre3 libpcre3-dev libbz2-dev libssl-dev \

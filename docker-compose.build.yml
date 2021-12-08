@@ -8,12 +8,6 @@ services:
       context: ./services/entry
       dockerfile: Dockerfile
 
-  api:
-    image: ghcr.io/husky-dev/kremen-api/api:latest
-    build:
-      context: ./services/api
-      dockerfile: Dockerfile.prd
-
   transport-api:
     image: ghcr.io/husky-dev/kremen-api/transport-api:latest
     build:
@@ -33,4 +27,3 @@ services:
     image: ghcr.io/husky-dev/kremen-api/backup:latest
     build:
       context: ./services/backup
-      dockerfile: Dockerfile.prd

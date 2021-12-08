@@ -9,6 +9,8 @@ RUN yarn dist
 
 FROM node:14-alpine3.10
 
+LABEL org.opencontainers.image.source https://github.com/husky-dev/kremen-api
+
 ENV NODE_ENV=production
 ENV PORT=8080
 EXPOSE 8080

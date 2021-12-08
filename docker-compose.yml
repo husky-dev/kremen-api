@@ -12,7 +12,6 @@ services:
       - transport-api
       - equipment-web
       - equipment-api
-      - api
       - watchman
     volumes:
       - 'ssl:/etc/letsencrypt'
@@ -69,14 +68,6 @@ services:
     environment:
       - NODE_ENV=production
       - LOG_LEVEL=info
-    restart: always
-
-  api:
-    image: ghcr.io/husky-dev/kremen-api/api:latest
-    container_name: api
-    hostname: api
-    depends_on: 
-      - redis
     restart: always
 
   redis:

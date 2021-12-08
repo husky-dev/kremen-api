@@ -78,22 +78,22 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
   const { pathname = '', query = {} } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
   try {
-    if (req.method === 'GET' && pathname === '/routes') return handleRoutes(res);
-    if (req.method === 'GET' && pathname === '/buses') return handleBuses(res, query);
-    if (req.method === 'GET' && pathname === '/find') return handleFind(res, query);
+    if (req.method === 'GET' && pathname === '/transport/routes') return handleRoutes(res);
+    if (req.method === 'GET' && pathname === '/transport/buses') return handleBuses(res, query);
+    if (req.method === 'GET' && pathname === '/transport/find') return handleFind(res, query);
     // Buses
-    if (req.method === 'GET' && pathname === '/buses/stations') return handleBusesStations(res, query);
+    if (req.method === 'GET' && pathname === '/transport/buses/stations') return handleBusesStations(res, query);
     // Stations
-    const stationPredictionMatch = /^\/stations\/(\d+)\/prediction$/g.exec(pathname);
+    const stationPredictionMatch = /^\/transport\/stations\/(\d+)\/prediction$/g.exec(pathname);
     if (req.method === 'GET' && stationPredictionMatch) {
       return handleStationPrediction(res, query, { sid: parseInt(stationPredictionMatch[1], 10) });
     }
     // Routes
-    const routeBusesMatch = /^\/routes\/(\d+)\/buses$/g.exec(pathname);
+    const routeBusesMatch = /^\/transport\/routes\/(\d+)\/buses$/g.exec(pathname);
     if (req.method === 'GET' && routeBusesMatch) {
       return handleRouteBusses(res, query, { rid: parseInt(routeBusesMatch[1], 10) });
     }
-    const routeStationsMatch = /^\/routes\/(\d+)\/stations$/g.exec(pathname);
+    const routeStationsMatch = /^\/transport\/routes\/(\d+)\/stations$/g.exec(pathname);
     if (req.method === 'GET' && routeStationsMatch) {
       return handleRouteStations(res, query, { rid: parseInt(routeStationsMatch[1], 10) });
     }

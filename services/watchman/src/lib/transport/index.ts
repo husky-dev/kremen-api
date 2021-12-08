@@ -1,28 +1,23 @@
-import { isTransportBuses, TransportBus } from '@kremen/types';
-import axios from 'axios';
-import { WatcherOpt } from 'core';
+import { config } from '@config';
+import { RedisClientType } from '@core';
+import { errToStr, hourSec, Log, minMs, secMs } from '@utils';
 import { compact } from 'lodash';
-import { Log } from 'utils';
+import { Db } from 'mongodb';
 import WebSocket from 'ws';
 
+import { api } from './api';
+import { TransportBus } from './types';
 import { getBusesDiff } from './utils';
 
-const log = Log('wss.tranposrt');
+const log = Log('tranposrt');
 
-const getBuses = async (apiRoot: string) => {
-  log.debug('getting buses info');
-  const { status, data } = await axios(`${apiRoot}/transport/buses`);
-  if (status < 200 || status > 299) {
-    throw new Error(`Wrong response status: ${status}`);
-  }
-  if (!isTransportBuses(data)) {
-    throw new Error(`Wrong returned data format`);
-  }
-  log.debug('getting buses info done');
-  return data;
-};
+interface WatcherOpt {
+  wss: WebSocket.Server;
+  mongo: Db;
+  redis: RedisClientType;
+}
 
-export const initTransprotWatcher = ({ apiRoot, wss, db }: WatcherOpt) => {
+export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
   // WSS
 
   wss.on('connection', () => {
@@ -39,7 +34,7 @@ export const initTransprotWatcher = ({ apiRoot, wss, db }: WatcherOpt) => {
 
   // Mongo
 
-  const logCollection = db.collection('transportLog');
+  const logCollection = mongo.collection('transportLog');
 
   const mongoProcessChanged = (items: Partial<TransportBus>[]) => {
     const ts = new Date().getTime();
@@ -79,26 +74,57 @@ export const initTransprotWatcher = ({ apiRoot, wss, db }: WatcherOpt) => {
 
   // Processing
 
-  setInterval(() => {
-    processBusesUpdate();
-  }, 5000);
-
   let prevBuses: TransportBus[] = [];
 
   const processBusesUpdate = async () => {
     try {
-      log.debug('processing buses start');
-      const newBuses = await getBuses(apiRoot);
+      log.debug('processing buses');
+
+      const newBuses = await api.getBuses();
+
+      log.debug('saving response to cache');
+      await redis.setEx(`${config.cache.nginxKey}:/transport/buses`, 10, JSON.stringify(newBuses));
+      log.debug('saving response to cache done');
+
       const diff = getBusesDiff(prevBuses, newBuses);
       if (diff.length) {
-        log.debug(`busses changed, count=`, diff.length);
+        log.debug(`buses changed, count=`, diff.length);
         wssProcessChanged(diff);
         mongoProcessChanged(diff);
       }
       prevBuses = newBuses;
-      log.debug('processing buses end');
-    } catch (err) {
-      log.err('processing buses err=', err);
+
+      log.debug('processing buses done');
+    } catch (err: unknown) {
+      log.err('processing buses', { err: errToStr(err) });
     }
   };
+
+  const processRoutesUpdate = async () => {
+    try {
+      log.debug('processing routes');
+
+      const routes = await api.getRoutes();
+
+      log.debug('saving response to cache');
+      await redis.setEx(`${config.cache.nginxKey}:/transport/routes`, hourSec, JSON.stringify(routes));
+      log.debug('saving response to cache done');
+
+      log.debug('processing routes done');
+    } catch (err: unknown) {
+      log.err('processing routes', { err: errToStr(err) });
+    }
+  };
+
+  processBusesUpdate();
+
+  setInterval(() => {
+    processBusesUpdate();
+  }, secMs * 5);
+
+  processRoutesUpdate();
+
+  setInterval(() => {
+    processRoutesUpdate();
+  }, minMs);
 };

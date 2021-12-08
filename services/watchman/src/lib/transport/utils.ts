@@ -1,5 +1,5 @@
-import { TransportBus } from '@kremen/types';
-import { getObjectsDiff } from 'utils';
+import { TransportBus } from './types';
+import { getObjectsDiff } from '@utils';
 
 export const getBusesDiff = (prev: TransportBus[], next: TransportBus[]): Partial<TransportBus>[] => {
   const res: Partial<TransportBus>[] = [];

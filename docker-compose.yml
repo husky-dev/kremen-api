@@ -25,35 +25,50 @@ services:
     image: ghcr.io/husky-dev/kremen-main-web/app:latest
     container_name: main-web
     hostname: main-web
-
-  transport-web:
-    image: ghcr.io/husky-dev/kremen-transport-web/app:latest
-    container_name: transport-web
-    hostname: transport-web
-
-  transport-api:
-    image: ghcr.io/husky-dev/kremen-api/transport-api:latest
-    container_name: transport-api
-    hostname: transport-api
-
-  equipment-web:
-    image: ghcr.io/husky-dev/kremen-equipment-web/app:latest
-    container_name: equipment-web
-    hostname: equipment-web
-
-  equipment-api:
-    image: ghcr.io/husky-dev/kremen-api/equipment-api:latest
-    container_name: equipment-api
-    hostname: equipment-api
+    restart: always
 
   watchman:
     image: ghcr.io/husky-dev/kremen-api/watchman:latest
     container_name: watchman
     hostname: watchman
     depends_on:
-      - api
+      - transport-api
+      - equipment-api
       - mongo
       - redis
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    restart: always
+
+  transport-web:
+    image: ghcr.io/husky-dev/kremen-transport-web/app:latest
+    container_name: transport-web
+    hostname: transport-web
+    restart: always
+
+  transport-api:
+    image: ghcr.io/husky-dev/kremen-api/transport-api:latest
+    container_name: transport-api
+    hostname: transport-api
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    restart: always
+
+  equipment-web:
+    image: ghcr.io/husky-dev/kremen-equipment-web/app:latest
+    container_name: equipment-web
+    hostname: equipment-web
+    restart: always
+
+  equipment-api:
+    image: ghcr.io/husky-dev/kremen-api/equipment-api:latest
+    container_name: equipment-api
+    hostname: equipment-api
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
     restart: always
 
   api:
@@ -65,7 +80,7 @@ services:
     restart: always
 
   redis:
-    image: ghcr.io/husky-dev/kremen-api/redis:latest
+    image: redis:6.0-alpine
     container_name: redis
     hostname: redis
     volumes:
@@ -73,7 +88,7 @@ services:
     restart: always
 
   mongo:
-    image: ghcr.io/husky-dev/kremen-api/mongo:latest
+    image: mongo:4.4
     container_name: mongo
     hostname: mongo
     volumes:

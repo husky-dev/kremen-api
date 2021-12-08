@@ -28,19 +28,6 @@ services:
     image: ghcr.io/husky-dev/kremen-api/watchman:latest
     build:
       context: ./services/watchman
-      dockerfile: Dockerfile.prd
-
-  redis:
-    image: ghcr.io/husky-dev/kremen-api/redis:latest
-    build:
-      context: ./services/redis
-      dockerfile: Dockerfile.prd
-
-  mongo:
-    image: ghcr.io/husky-dev/kremen-api/mongo:latest
-    build:
-      context: ./services/mongo
-      dockerfile: Dockerfile.prd
 
   backup:
     image: ghcr.io/husky-dev/kremen-api/backup:latest

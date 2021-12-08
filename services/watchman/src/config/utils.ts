@@ -7,7 +7,8 @@ interface PackageContent {
   version: string;
 }
 
-const isPackageContent = (val: unknown): val is PackageContent => isUnknowDict(val) && isStr(val.name) && isStr(val.version);
+const isPackageContent = (val: unknown): val is PackageContent =>
+  isUnknowDict(val) && isStr(val.name) && isStr(val.version);
 
 if (!isPackageContent(pckg)) {
   console.error(`wrong package.json format`);
@@ -16,17 +17,17 @@ if (!isPackageContent(pckg)) {
 
 const { name, version } = pckg;
 
-export type ConfigEnv = 'development' | 'production';
+export type AppEnv = 'development' | 'production';
 
 export type LogLevel = 'none' | 'err' | 'warn' | 'info' | 'debug' | 'trace';
 
-const isConfigEnv = (val: unknown): val is ConfigEnv => isStr(val) && ['development', 'production'].includes(val);
+const isAppEnv = (val: unknown): val is AppEnv => isStr(val) && ['development', 'production'].includes(val);
 
-export const getAppEnv = (): ConfigEnv => {
+export const getAppEnv = (): AppEnv => {
   const val = process.env.NODE_ENV;
   if (isStr(val)) {
     const modStr = val.toLocaleLowerCase().trim();
-    if (isConfigEnv(modStr)) {
+    if (isAppEnv(modStr)) {
       return modStr;
     }
   }

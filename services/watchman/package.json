@@ -1,12 +1,13 @@
 {
   "name": "@kremen/watchman",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/index.js",
-    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"NODE_ENV=dev ts-node -r tsconfig-paths/register src/index.ts\"",
-    "dist": "webpack",
+    "start": "yarn start:prd",
+    "start:prd": "node dist/index.js",
+    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && node dist/index.js\"",
+    "dist": "tsc && tsc-alias",
     "lint": "yarn lint:types && yarn lint:eslint",
     "lint:eslint": "eslint \"src/**\"",
     "lint:types": "tsc --noEmit --skipLibCheck",
@@ -22,29 +23,26 @@
       "prettier --write"
     ]
   },
+  "dependencies": {
+    "axios": "0.24.0",
+    "lodash": "4.17.21",
+    "mongodb": "4.2.1",
+    "redis": "4.0.0",
+    "ws": "7.3.1"
+  },
   "devDependencies": {
-    "@types/lodash": "4.14.162",
-    "@types/mongodb": "3.5.33",
+    "@types/lodash": "4.14.177",
+    "@types/mongodb": "4.0.7",
     "@types/node": "14.11.8",
     "@types/ws": "7.2.7",
-    "eslint": "7.11.0",
+    "@typescript-eslint/eslint-plugin": "5.6.0",
+    "@typescript-eslint/parser": "5.6.0",
+    "eslint": "8.4.1",
     "husky": "4.3.0",
     "lint-staged": "10.4.0",
     "nodemon": "2.0.5",
-    "prettier": "2.1.2",
-    "ts-loader": "8.0.5",
-    "ts-node": "9.0.0",
-    "tsconfig-paths": "3.9.0",
-    "tsconfig-paths-webpack-plugin": "3.3.0",
-    "typescript": "4.0.3",
-    "webpack": "5.1.2",
-    "webpack-cli": "4.0.0"
-  },
-  "dependencies": {
-    "@kremen/types": "0.0.7",
-    "axios": "0.20.0",
-    "lodash": "4.17.20",
-    "mongodb": "3.6.3",
-    "ws": "7.3.1"
+    "prettier": "2.5.1",
+    "tsc-alias": "1.4.2",
+    "typescript": "4.5.2"
   }
 }

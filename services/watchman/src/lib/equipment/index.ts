@@ -1,28 +1,23 @@
-import { EquipmentMachine, isEqipmentMachines } from '@kremen/types';
-import axios from 'axios';
-import { WatcherOpt } from 'core';
-import { compact, identity, pickBy } from 'lodash';
-import { Log } from 'utils';
+import { config } from '@config';
+import { RedisClientType } from '@core';
+import { errToStr, Log } from '@utils';
+import { compact } from 'lodash';
+import { Db } from 'mongodb';
 import WebSocket from 'ws';
 
+import { api } from './api';
+import { EquipmentMachine } from './types';
 import { getEquipmentMachineDiff } from './utils';
 
-const log = Log('wss.equipment');
+const log = Log('equipment');
 
-const getItems = async (apiRoot: string): Promise<EquipmentMachine[]> => {
-  log.debug('getting items');
-  const { status, data } = await axios(`${apiRoot}/equipment`);
-  if (status < 200 || status > 299) {
-    throw new Error(`Wrong response status: ${status}`);
-  }
-  if (!isEqipmentMachines(data)) {
-    throw new Error(`Wrong returned data format`);
-  }
-  log.debug('getting items done');
-  return data;
-};
+interface WatcherOpt {
+  wss: WebSocket.Server;
+  mongo: Db;
+  redis: RedisClientType;
+}
 
-export const initEquipmentWatcher = ({ apiRoot, wss, db }: WatcherOpt) => {
+export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
   // WSS
 
   wss.on('connection', () => {
@@ -39,7 +34,7 @@ export const initEquipmentWatcher = ({ apiRoot, wss, db }: WatcherOpt) => {
 
   // Mongo
 
-  const logCollection = db.collection('equipmentLog');
+  const logCollection = mongo.collection('equipmentLog');
 
   const mongoProcessChanged = (items: Partial<EquipmentMachine>[]) => {
     const ts = new Date().getTime();
@@ -78,14 +73,20 @@ export const initEquipmentWatcher = ({ apiRoot, wss, db }: WatcherOpt) => {
 
   setInterval(() => {
     processItemsUpdate();
-  }, 10000);
+  }, 5000);
 
   let prevItems: EquipmentMachine[] = [];
 
   const processItemsUpdate = async () => {
     try {
-      log.debug('processing items start');
-      const newItems = await getItems(apiRoot);
+      log.debug('processing items');
+
+      const newItems = await api.getItems();
+
+      log.debug('saving response to cache');
+      await redis.setEx(`${config.cache.nginxKey}:/equipment`, 10, JSON.stringify(newItems));
+      log.debug('saving response to cache done');
+
       const diff = getEquipmentMachineDiff(prevItems, newItems);
       if (diff.length) {
         log.debug(`items changed, count=`, diff.length);
@@ -93,9 +94,10 @@ export const initEquipmentWatcher = ({ apiRoot, wss, db }: WatcherOpt) => {
         mongoProcessChanged(diff);
       }
       prevItems = newItems;
-      log.debug('processing items end');
+
+      log.debug('processing items done');
     } catch (err) {
-      log.err('processing items err=', err.message);
+      log.err('processing items err', { err: errToStr(err) });
     }
   };
 };

@@ -32,7 +32,6 @@ const api = getApi().withCity(TransportCity.Kremenchuk);
 
 const handleRoutes = async (res: ServerResponse) => {
   const data = await api.getRoutesWithStations();
-  log.warn('Routes called');
   return sendOk(res, data);
 };
 

@@ -1,4 +1,13 @@
-import { ConfigEnv, getAppEnv, getAppName, getAppVersion, LogLevel, parseLogLevelParam, parseNumParam } from './utils';
+import {
+  ConfigEnv,
+  getAppEnv,
+  getAppName,
+  getAppVersion,
+  LogLevel,
+  parseLogLevelParam,
+  parseNumParam,
+  parseStrParamOrExit,
+} from './utils';
 
 interface Config {
   env: ConfigEnv;
@@ -7,6 +16,9 @@ interface Config {
   port: number;
   log: {
     level: LogLevel;
+  };
+  sentry: {
+    dsn: string;
   };
 }
 
@@ -17,6 +29,9 @@ export const config: Config = {
   port: parseNumParam(process.env.PORT, 8080),
   log: {
     level: parseLogLevelParam(process.env.LOG_LEVEL, 'info'),
+  },
+  sentry: {
+    dsn: parseStrParamOrExit(process.env.SENTRY_DSN, 'SENTRY_DSN'),
   },
 };
 

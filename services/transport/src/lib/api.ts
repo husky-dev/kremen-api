@@ -17,7 +17,7 @@ import {
 } from './types';
 import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceStation } from './utils';
 
-const log = Log('transport.api');
+const log = Log('lib');
 
 interface TranportApiReqOpt {
   path: string;

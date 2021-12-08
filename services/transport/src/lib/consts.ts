@@ -1,6 +1,6 @@
 import { Log } from '@core';
 import randomcolor from 'randomcolor';
-const log = Log('transport.consts');
+const log = Log('lib');
 
 export const routeColors: Record<string, string> = {
   '1': '#6B7A89',

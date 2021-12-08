@@ -49,7 +49,9 @@ export const Log = (m?: string) => {
   };
 
   return {
-    err: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'err' }),
+    err: (msg: string, meta?: unknown) => {
+      logWithOpt({ msg, meta, level: 'err' });
+    },
     warn: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'warn' }),
     info: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'info' }),
     debug: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'debug' }),

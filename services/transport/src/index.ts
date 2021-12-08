@@ -1,7 +1,7 @@
 import { config } from '@config';
-import { Log } from '@core';
+import { log } from '@core';
 import { getApi, TransportCity } from '@lib';
-import { routeColors } from '@lib/consts';
+import * as Sentry from '@sentry/node';
 import {
   errToStr,
   HttpQs,
@@ -17,8 +17,17 @@ import {
 import { IncomingMessage, ServerResponse } from 'http';
 import url from 'url';
 
-const log = Log('tranposrt');
 log.info('config', config);
+
+Sentry.init({
+  dsn: config.sentry.dsn,
+  tracesSampleRate: 1.0,
+  environment: config.env,
+  debug: config.env === 'development' ? true : false,
+  release: `${config.name}@${config.version}`,
+  serverName: config.name,
+  integrations: [new Sentry.Integrations.Http({ tracing: true })],
+});
 
 const api = getApi().withCity(TransportCity.Kremenchuk);
 
@@ -77,8 +86,18 @@ const handleRouteStations = async (res: ServerResponse, query: HttpQs, { rid }: 
 export default async (req: IncomingMessage, res: ServerResponse) => {
   const { pathname = '', query = {} } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
+  const transaction = Sentry.startTransaction({
+    name: 'request',
+    metadata: {
+      requestPath: pathname,
+    },
+  });
+  Sentry.addBreadcrumb;
+
   try {
-    if (req.method === 'GET' && pathname === '/transport/routes') return handleRoutes(res);
+    if (req.method === 'GET' && pathname === '/transport/routes') {
+      return await handleRoutes(res);
+    }
     if (req.method === 'GET' && pathname === '/transport/buses') return handleBuses(res, query);
     if (req.method === 'GET' && pathname === '/transport/find') return handleFind(res, query);
     // Buses
@@ -100,6 +119,9 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
     // Default respond
     return sendNotFoundErr(res, 'Endpoint not found');
   } catch (err: unknown) {
+    Sentry.captureException(err);
     return sendInternalServerErr(res, errToStr(err));
+  } finally {
+    transaction.finish();
   }
 };

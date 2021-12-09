@@ -2,18 +2,18 @@ version: '3.7'
 
 services:
 
-  entry:
+  nginx:
     build:
-      context: ./services/entry
-    container_name: entry
-    hostname: entry
+      context: ./services/nginx
+    container_name: nginx
+    hostname: nginx
     depends_on:
       - transport-api
       - equipment-api
       - watchman
       - redis
     volumes:
-      - ./services/entry/conf/development:/etc/nginx/conf.d
+      - ./services/nginx/conf/development:/etc/nginx/conf.d
     ports:
       - '80:80'
 

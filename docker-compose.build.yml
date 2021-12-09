@@ -2,11 +2,10 @@ version: '3.7'
 
 services:
 
-  entry:
-    image: ghcr.io/husky-dev/kremen-api/entry:latest
+  nginx:
+    image: ghcr.io/husky-dev/kremen-api/nginx:latest
     build:
-      context: ./services/entry
-      dockerfile: Dockerfile
+      context: ./services/nginx
 
   transport-api:
     image: ghcr.io/husky-dev/kremen-api/transport-api:latest

@@ -2,10 +2,10 @@ version: '3.7'
 
 services:
 
-  entry:
-    image: ghcr.io/husky-dev/kremen-api/entry:latest
-    container_name: entry
-    hostname: entry
+  nginx:
+    image: ghcr.io/husky-dev/kremen-api/nginx:latest
+    container_name: nginx
+    hostname: nginx
     depends_on:
       - main-web
       - transport-web

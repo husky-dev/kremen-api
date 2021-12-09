@@ -85,13 +85,6 @@ const handleRouteStations = async (res: ServerResponse, query: HttpQs, { rid }: 
 export default async (req: IncomingMessage, res: ServerResponse) => {
   const { pathname = '', query = {} } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
-  const transaction = Sentry.startTransaction({
-    name: 'request',
-    metadata: {
-      requestPath: pathname,
-    },
-  });
-
   try {
     if (req.method === 'GET' && pathname === '/transport/routes') {
       return await handleRoutes(res);
@@ -119,7 +112,5 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
   } catch (err: unknown) {
     Sentry.captureException(err);
     return sendInternalServerErr(res, errToStr(err));
-  } finally {
-    transaction.finish();
   }
 };

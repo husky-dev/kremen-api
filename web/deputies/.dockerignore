@@ -1,9 +1,0 @@
-.git/
-node_modules/
-
-.editorconfig
-.gitignore
-dist
-
-CHANGELOG.md
-README.md

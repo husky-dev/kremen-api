@@ -7,7 +7,7 @@ import WebSocket from 'ws';
 
 import { api } from './api';
 import { TransportBus } from './types';
-import { getBusesDiff } from './utils';
+import { busesToLocations, getBusesDiff } from './utils';
 
 const log = Log('tranposrt');
 
@@ -81,10 +81,15 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
       log.debug('processing buses');
 
       const newBuses = await api.getBuses();
+      const newLocations = busesToLocations(newBuses);
 
-      log.debug('saving response to cache');
+      log.debug('saving buses to cache');
       await redis.setEx(`${config.cache.nginxKey}:/transport/buses`, 10, JSON.stringify(newBuses));
-      log.debug('saving response to cache done');
+      log.debug('saving buses to cache done');
+
+      log.debug('saving locations to cache');
+      await redis.setEx(`${config.cache.nginxKey}:/transport/buses/locations`, 10, JSON.stringify(newLocations));
+      log.debug('saving locations to cache done');
 
       const diff = getBusesDiff(prevBuses, newBuses);
       if (diff.length) {

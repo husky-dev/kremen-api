@@ -79,3 +79,17 @@ const parseLatLngPath = (val: string): number[][] => {
     }),
   );
 };
+
+// Utils
+
+interface TransportBusesLocations {
+  [key: string]: number[];
+}
+
+export const busesToLocations = (items: TransportBus[]): TransportBusesLocations => {
+  const res: TransportBusesLocations = {};
+  for (const item of items) {
+    res[item.tid] = [item.lat, item.lng, item.direction, item.speed];
+  }
+  return res;
+};

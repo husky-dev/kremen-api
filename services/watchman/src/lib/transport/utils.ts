@@ -16,3 +16,15 @@ export const getBusesDiff = (prev: TransportBus[], next: TransportBus[]): Partia
   }
   return res;
 };
+
+interface TransportBusesLocations {
+  [key: string]: number[];
+}
+
+export const busesToLocations = (items: TransportBus[]): TransportBusesLocations => {
+  const res: TransportBusesLocations = {};
+  for (const item of items) {
+    res[item.tid] = [item.lat, item.lng, item.direction, item.speed];
+  }
+  return res;
+};

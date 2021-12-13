@@ -1,22 +1,13 @@
 import { config } from '@config';
-import { initMongoClient, initRedisClient, log } from '@core';
+import { initMongoClient, initRedisClient, initSentry, log } from '@core';
 import { initEquipmentWatcher, initTransprotWatcher } from '@lib';
-import * as Sentry from '@sentry/node';
 import { errToStr } from '@utils';
 import http from 'http';
 import url from 'url';
 import WebSocket from 'ws';
 
+initSentry();
 log.info('config', config);
-
-Sentry.init({
-  dsn: config.sentry.dsn,
-  tracesSampleRate: 1.0,
-  environment: config.env,
-  debug: config.env === 'development' ? true : false,
-  release: `${config.name.replace('@kremen/', 'kremen-')}@${config.version}`,
-  integrations: [new Sentry.Integrations.Http({ tracing: true })],
-});
 
 const server = http.createServer();
 

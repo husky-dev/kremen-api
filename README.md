@@ -1,29 +1,21 @@
-# #Kremen.Dev
+# #Kremen.Dev - API
 
-Set of services for the Kremenchuk city.
+Set of APIs for Kremenchuk city.
+
+![Build](https://github.com/husky-dev/kremen-api/workflows/Build/badge.svg)
 
 ## Development
 
-Deploy:
+`.env` file example:
 
 ```bash
-make build && make push
-```
-
-Run production
-
-```bash
-docker-compose -f docker-compose.prd.yml up
-```
-
-Backup envs:
-
-```bash
-make envs-backup
+TRANSPORT_API_SENTRY_DSN=
+EQUIPMENT_API_SENTRY_DSN=
+WATCHMAN_API_SENTRY_DSN=
 ```
 
 ## Contacts
 
 Jaroslav Khorishchenko
 
-[Facebook](https://fb.me/snipter), [Twitter](https://twitter.com/snipter), [Telegram](https://t.me/ideveloper)
+[jaro@smartapp.dev](mailto:jaro@smartapp.dev)

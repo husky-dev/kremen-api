@@ -110,3 +110,7 @@ export interface TransportDataSourcePrediction {
   speed: number;
   mainPrediction: boolean;
 }
+
+export interface TransportBusesLocations {
+  [key: string]: number[];
+}

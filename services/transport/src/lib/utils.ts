@@ -3,6 +3,7 @@ import { compact } from 'lodash';
 import { routeNumberToColor } from './consts';
 import {
   TransportBus,
+  TransportBusesLocations,
   TransportDataSourceBus,
   TransportDataSourcePrediction,
   TransportDataSourceRoute,
@@ -81,10 +82,6 @@ const parseLatLngPath = (val: string): number[][] => {
 };
 
 // Utils
-
-interface TransportBusesLocations {
-  [key: string]: number[];
-}
 
 export const busesToLocations = (items: TransportBus[]): TransportBusesLocations => {
   const res: TransportBusesLocations = {};

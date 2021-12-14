@@ -12,38 +12,40 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: Login
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.CR_PAT }}
-    - name: 'Notify: done'
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        format: markdown
-        args: |
-          🔥 *kremen-api:* build started
-    - name: Setup envs
+    - name: 'Env: set package version'
+      run: >
+        echo "APP_VERSION=$(cat package.json | grep version | head -1 | awk
+        -F: '{ print $2 }' | sed 's/[",\t ]//g')" >> $GITHUB_ENV
+    - name: 'Env: setup envs'
       env:
         ENVS: ${{ secrets.ENVS }}
       run: |
         echo "$ENVS" > setup_envs.sh
         chmod +x setup_envs.sh
         ./setup_envs.sh
-    - name: 'Docker: pull'
-      run: docker-compose -f docker-compose.build.yml pull
-    - name: 'Docker: build'
-      run: docker-compose -f docker-compose.build.yml build
-    - name: 'Docker: push'
-      run: docker-compose -f docker-compose.build.yml push
-    - name: 'Notify: done'
+    - name: 'Telegram: start'
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         format: markdown
         args: |
-          🏁 *kremen-api:* build finished
+          🆕 *kremen-api:* ${{ env.APP_VERSION }} build started
+    - name: 'Docker: login'
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.CR_PAT }}
+    - name: 'Docker: build'
+      run: docker-compose -f docker-compose.build.yml build
+    - name: 'Docker: push'
+      run: docker-compose -f docker-compose.build.yml push
+    - name: 'Telegram: done'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        format: markdown
+        args: |
+          🏁 *kremen-api:* ${{ env.APP_VERSION }} build finished

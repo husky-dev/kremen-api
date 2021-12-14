@@ -1,5 +1,5 @@
 {
-  "name": "@kremen/transport-api",
+  "name": "kremen-transport-api",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",

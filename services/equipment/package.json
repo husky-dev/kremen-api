@@ -1,5 +1,5 @@
 {
-  "name": "@kremen/equipment-api",
+  "name": "kremen-equipment-api",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",

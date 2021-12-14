@@ -12,8 +12,7 @@ Sentry.init({
   dsn: config.sentry.dsn,
   tracesSampleRate: 1.0,
   environment: config.env,
-  debug: config.env === 'development' ? true : false,
-  release: `${config.name.replace('@kremen/', 'kremen-')}@${config.version}`,
+  release: `${config.name}@${config.version}`,
   integrations: [new Sentry.Integrations.Http({ tracing: true })],
 });
 

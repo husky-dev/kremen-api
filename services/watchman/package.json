@@ -1,5 +1,5 @@
 {
-  "name": "@kremen/watchman",
+  "name": "kremen-watchman",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",

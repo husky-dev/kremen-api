@@ -34,6 +34,11 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
 
   // Mongo
 
+  const itemsCollection = mongo.collection('transportItems');
+
+  const mongoProcessItems = async (items: TransportBus[]) =>
+    Promise.all(items.map(itm => itemsCollection.updateOne({ eid: itm.tid }, { $set: itm }, { upsert: true })));
+
   const logCollection = mongo.collection('transportLog');
 
   const mongoProcessChanged = (items: Partial<TransportBus>[]) => {
@@ -82,6 +87,10 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
 
       const newBuses = await api.getBuses();
       const newLocations = busesToLocations(newBuses);
+
+      log.debug('saving buses to db');
+      await mongoProcessItems(newBuses);
+      log.debug('saving buses to db done');
 
       log.debug('saving buses to cache');
       await redis.setEx(`${config.cache.nginxKey}:/transport/buses`, 10, JSON.stringify(newBuses));

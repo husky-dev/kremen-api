@@ -34,6 +34,12 @@ export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
 
   // Mongo
 
+  const itemsCollection = mongo.collection('equipmentItems');
+
+  const mongoProcessItems = async (items: EquipmentMachine[]) => {
+    return Promise.all(items.map(itm => itemsCollection.updateOne({ eid: itm.eid }, { $set: itm }, { upsert: true })));
+  };
+
   const logCollection = mongo.collection('equipmentLog');
 
   const mongoProcessChanged = (items: Partial<EquipmentMachine>[]) => {
@@ -51,21 +57,13 @@ export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
   };
 
   const itemDataToMongoLogRec = (item: Partial<EquipmentMachine>, ts: number) => {
-    if (!item.eid) {
+    if (!item.eid || !item.lat || !item.lng) {
       return undefined;
     }
     const { eid, lat, lng, speed } = item;
     type Record = Partial<Pick<EquipmentMachine, 'eid' | 'lat' | 'lng' | 'speed'>> & { ts: number };
-    const data: Record = { eid, ts };
-    if (lat) {
-      data.lat = lat;
-    }
-    if (lng) {
-      data.lng = lng;
-    }
-    if (speed) {
-      data.speed = speed;
-    }
+    const data: Record = { eid, lat, lng, ts };
+    if (speed) data.speed = speed;
     return data;
   };
 
@@ -82,6 +80,10 @@ export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
       log.debug('processing items');
 
       const newItems = await api.getItems();
+
+      log.debug('updating data in db');
+      await mongoProcessItems(newItems);
+      log.debug('updating data in db done');
 
       log.debug('saving response to cache');
       await redis.setEx(`${config.cache.nginxKey}:/equipment`, 10, JSON.stringify(newItems));

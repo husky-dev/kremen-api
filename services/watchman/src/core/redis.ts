@@ -3,7 +3,7 @@ import { Log } from './log';
 import { errToStr } from '@utils';
 import { createClient } from 'redis';
 
-const log = Log('reids');
+const log = Log('core.reids');
 
 export type RedisClientType = ReturnType<typeof createClient>;
 

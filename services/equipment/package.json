@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "yarn start:prd",
-    "start:prd": "micro -l tcp://0.0.0.0:${PORT-8080} dist/index.js",
-    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && yarn micro-dev -p 8080 -s dist/index.js\"",
+    "start:prd": "node dist/index.js",
+    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && node dist/index.js\"",
     "dist": "tsc && tsc-alias",
     "lint": "yarn lint:types && yarn lint:eslint",
     "lint:types": "tsc --noEmit --skipLibCheck",
@@ -20,6 +20,7 @@
     "lodash": "4.17.21",
     "md5": "2.3.0",
     "micro": "9.3.4",
+    "mongodb": "4.2.2",
     "randomcolor": "0.6.2"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { isNum, isStr, isUnknowDict } from '@utils';
+import { isNum, isStr, isUnknownDict } from '@utils';
 import pckg from '../../package.json';
 
 interface PackageContent {
@@ -8,7 +8,7 @@ interface PackageContent {
 }
 
 const isPackageContent = (val: unknown): val is PackageContent =>
-  isUnknowDict(val) && isStr(val.name) && isStr(val.version);
+  isUnknownDict(val) && isStr(val.name) && isStr(val.version);
 
 if (!isPackageContent(pckg)) {
   console.error(`wrong package.json format`);

@@ -1,13 +1,13 @@
 import { config } from '@config';
 import { Log, RedisClientType } from '@core';
+import { getApi, TransportBus } from '@core/api';
+import { ApiError } from '@core/api/utils';
 import { errToStr, hourSec, minMs, secMs } from '@utils';
 import { compact } from 'lodash';
 import { Db } from 'mongodb';
 import WebSocket from 'ws';
 
-import { api } from './api';
-import { TransportBus } from './types';
-import { busesToLocations, getBusesDiff } from './utils';
+import { getBusesDiff } from './utils';
 
 const log = Log('tranposrt');
 
@@ -19,6 +19,8 @@ interface WatcherOpt {
 
 export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
   // WSS
+
+  const api = getApi({ apiRoot: 'http://transport-api:8080/' });
 
   wss.on('connection', () => {
     log.debug('new connection');
@@ -61,19 +63,7 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
     }
     const { tid, lat, lng, speed, direction } = item;
     type Record = Partial<Pick<TransportBus, 'tid' | 'lat' | 'lng' | 'speed' | 'direction'>> & { ts: number };
-    const data: Record = { tid, ts };
-    if (lat) {
-      data.lat = lat;
-    }
-    if (lng) {
-      data.lng = lng;
-    }
-    if (speed) {
-      data.speed = speed;
-    }
-    if (direction) {
-      data.direction = direction;
-    }
+    const data: Record = { tid, ts, lat, lng, speed, direction };
     return data;
   };
 
@@ -85,8 +75,7 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
     try {
       log.debug('processing buses');
 
-      const newBuses = await api.getBuses();
-      const newLocations = busesToLocations(newBuses);
+      const newBuses = await api.transport.buses();
 
       log.debug('saving buses to db');
       await mongoProcessItems(newBuses);
@@ -96,6 +85,7 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
       await redis.setEx(`${config.cache.nginxKey}:/transport/buses`, 10, JSON.stringify(newBuses));
       log.debug('saving buses to cache done');
 
+      const newLocations = await api.transport.busesLocations();
       log.debug('saving locations to cache');
       await redis.setEx(`${config.cache.nginxKey}:/transport/buses/locations`, 10, JSON.stringify(newLocations));
       log.debug('saving locations to cache done');
@@ -110,6 +100,9 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
 
       log.debug('processing buses done');
     } catch (err: unknown) {
+      if (err instanceof ApiError && err.code === 'DATASOURCE_ERROR') {
+        return log.debug('datasource unavailable, skip');
+      }
       log.err('processing buses', { err: errToStr(err) });
     }
   };
@@ -118,7 +111,7 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
     try {
       log.debug('processing routes');
 
-      const routes = await api.getRoutes();
+      const routes = await api.transport.routes();
 
       log.debug('saving response to cache');
       await redis.setEx(`${config.cache.nginxKey}:/transport/routes`, hourSec, JSON.stringify(routes));
@@ -126,6 +119,9 @@ export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
 
       log.debug('processing routes done');
     } catch (err: unknown) {
+      if (err instanceof ApiError && err.code === 'DATASOURCE_ERROR') {
+        return log.debug('datasource unavailable, skip');
+      }
       log.err('processing routes', { err: errToStr(err) });
     }
   };

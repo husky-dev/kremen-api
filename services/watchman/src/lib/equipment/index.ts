@@ -1,12 +1,11 @@
 import { config } from '@config';
 import { Log, RedisClientType } from '@core';
+import { ApiError, EquipmentMachine, getApi } from '@core/api';
 import { errToStr } from '@utils';
 import { compact } from 'lodash';
 import { Db } from 'mongodb';
 import WebSocket from 'ws';
 
-import { api } from './api';
-import { EquipmentMachine } from './types';
 import { getEquipmentMachineDiff } from './utils';
 
 const log = Log('equipment');
@@ -18,6 +17,7 @@ interface WatcherOpt {
 }
 
 export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
+  const api = getApi({ apiRoot: 'http://equipment-api:8080/' });
   // WSS
 
   wss.on('connection', () => {
@@ -79,7 +79,7 @@ export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
     try {
       log.debug('processing items');
 
-      const newItems = await api.getItems();
+      const newItems = await api.equipment.list();
 
       log.debug('updating data in db');
       await mongoProcessItems(newItems);
@@ -99,6 +99,9 @@ export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
 
       log.debug('processing items done');
     } catch (err) {
+      if (err instanceof ApiError && err.code === 'DATASOURCE_ERROR') {
+        return log.debug('datasource unavailable, skip');
+      }
       log.err('processing items err', { err: errToStr(err) });
     }
   };

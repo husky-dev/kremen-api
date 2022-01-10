@@ -1,4 +1,4 @@
-import { EquipmentMachine } from './types';
+import { EquipmentMachine } from '@core/api';
 import { getObjectsDiff } from '@utils';
 
 export const getEquipmentMachineDiff = (

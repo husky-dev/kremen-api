@@ -1,5 +1,5 @@
 import { isError, isFunction, isNumber, isString } from 'lodash';
-import { isUnknowDict } from './types';
+import { isUnknownDict } from './types';
 
 /**
  * Convert unknown error to string
@@ -18,12 +18,12 @@ export const errToStr = (err: unknown): string | undefined => {
   if (isNumber(err)) {
     return `${err}`;
   }
-  if (isUnknowDict(err) && isString(err.message)) {
+  if (isUnknownDict(err) && isString(err.message)) {
     return err.message;
   }
   // Rule disabled cos this is an edge case
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  if (isUnknowDict(err) && isFunction(err.toString)) {
+  if (isUnknownDict(err) && isFunction(err.toString)) {
     // Rule disabled cos this is an edge case
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
     return err.toString();

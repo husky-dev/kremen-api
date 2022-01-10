@@ -18,16 +18,22 @@ export const parseQueryIdsParam = (val: string): number[] =>
 
 export const sendOk = <D = unknown>(res: ServerResponse, data: D) => sendWithHeaders(res, 200, data);
 
-export const sendErr = (res: ServerResponse, code: number, message: string) => sendWithHeaders(res, code, { error: message });
+export const sendErr = (res: ServerResponse, status: number, code: string, message?: string) =>
+  sendWithHeaders(res, status, { code, message });
 
-export const sendNotFoundErr = (res: ServerResponse, message: string = 'Not found') => sendErr(res, 404, message);
+export const sendNotFoundErr = (res: ServerResponse, message: string = 'Not found') => sendErr(res, 404, 'NOT_FOUND', message);
 
-export const sendParamMissedErr = (res: ServerResponse, name: string) => sendErr(res, 422, `"${name}" param missed`);
+export const sendParamMissedErr = (res: ServerResponse, name: string) =>
+  sendErr(res, 422, 'PARAM_MISSED', `"${name}" param missed`);
 
-export const sendWrongFormatErr = (res: ServerResponse, name: string) => sendErr(res, 422, `Wrong "${name}" format`);
+export const sendWrongFormatErr = (res: ServerResponse, name: string) =>
+  sendErr(res, 422, 'WRONG_FORMAT', `Wrong "${name}" format`);
 
 export const sendInternalServerErr = (res: ServerResponse, message: string = 'Internal server error') =>
-  sendErr(res, 500, message);
+  sendErr(res, 500, 'INTERNAL_SERVER_ERROR', message);
+
+export const sendDatasourceErr = (res: ServerResponse, message: string = 'Datasource error') =>
+  sendErr(res, 503, 'DATASOURCE_ERROR', message);
 
 const sendWithHeaders = (res: ServerResponse, code: number, data?: unknown) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

@@ -1,12 +1,13 @@
 import { config } from '@config';
 import { initSentry, log } from '@core';
-import { busesToLocations, getApi, TransportCity } from '@lib';
+import { busesToLocations, DatasourceError, getApi, TransportCity } from '@lib';
 import * as Sentry from '@sentry/node';
 import {
   errToStr,
   HttpQs,
   isStr,
   parseQueryIdsParam,
+  sendDatasourceErr,
   sendInternalServerErr,
   sendNotFoundErr,
   sendOk,
@@ -119,6 +120,9 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
     // Default respond
     return sendNotFoundErr(res, 'Endpoint not found');
   } catch (err: unknown) {
+    if (err instanceof DatasourceError) {
+      return sendDatasourceErr(res, err.message);
+    }
     Sentry.captureException(err);
     return sendInternalServerErr(res, errToStr(err));
   }

@@ -1,6 +1,6 @@
 import { Log } from '@core';
 import { parseDataSourceRoutes } from '@lib';
-import { errToStr, HttpQs, LatLng } from '@utils';
+import { errToStr, HttpQs, LatLng, wait } from '@utils';
 import axios from 'axios';
 import { flatten } from 'lodash';
 
@@ -19,13 +19,22 @@ import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceStation }
 
 const log = Log('lib');
 
-interface TranportApiReqOpt {
-  path: string;
-  qs?: HttpQs;
+export class DatasourceError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
 }
 
+interface ApiReqOpt {
+  path: string;
+  qs?: HttpQs;
+  retry?: number;
+}
+
+const maxRetryCount = 3;
+
 export const getApi = () => {
-  const apiReq = async <T>({ path, qs }: TranportApiReqOpt): Promise<T> => {
+  const apiReq = async <T>({ path, qs, retry = 0 }: ApiReqOpt): Promise<T> => {
     try {
       const defQs = { lang: 'ru' };
       const reqQs = qs ? { ...defQs, ...qs } : defQs;
@@ -34,7 +43,11 @@ export const getApi = () => {
       const { data } = await axios({ url, params: reqQs });
       return data;
     } catch (err: unknown) {
-      throw new Error(`Datasource err: ${errToStr(err)}`);
+      if (retry >= maxRetryCount) throw new DatasourceError(`${errToStr(err)}`);
+      const waitMs = 2 ** retry * 100;
+      log.debug('api req err, retry', { path, qs, waitMs });
+      await wait(waitMs);
+      return apiReq({ path, qs, retry: retry + 1 });
     }
   };
 

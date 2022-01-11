@@ -1,4 +1,4 @@
-import { Log } from '@core';
+import { Log } from '@core/log';
 import { isStr } from '@utils';
 import axios from 'axios';
 

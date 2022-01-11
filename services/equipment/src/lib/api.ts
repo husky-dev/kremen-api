@@ -1,7 +1,7 @@
 import { Log } from '@core';
 import { EquipmentDataSourceTimeEntryData, EquipmentMachine } from '@lib';
-import { errToStr } from '@utils';
-import axios from 'axios';
+import { errToStr, wait } from '@utils';
+import axios, { AxiosRequestConfig } from 'axios';
 import { compact, maxBy } from 'lodash';
 import md5 from 'md5';
 import randomcolor from 'randomcolor';
@@ -9,6 +9,12 @@ import randomcolor from 'randomcolor';
 import { EquipmentDataSourceCar, EquipmentMachineType } from './types';
 
 const log = Log('lib');
+
+export class DatasourceError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}
 
 const getEquipmentList = async () => {
   const cars = await api.getCars();
@@ -41,25 +47,48 @@ const getEquipmentList = async () => {
   return equipment;
 };
 
-const getCars = async (): Promise<EquipmentDataSourceCar[]> => {
-  const url = 'http://admin.logistika.org.ua:1999/getcars';
+interface ApiReqOpt {
+  path: string;
+  method?: AxiosRequestConfig['method'];
+  data?: AxiosRequestConfig['data'];
+  retry?: number;
+}
+
+const maxRetryCount = 3;
+
+const apiReq = async <D>({ path, method = 'get', data, retry = 0 }: ApiReqOpt): Promise<D> => {
+  const url = `http://admin.logistika.org.ua:1999/${path}`;
   try {
-    const { data } = await axios({ url, method: 'GET' });
-    return data;
+    log.debug('api req', { method, url, data });
+    const { data: body } = await axios({ url, method, data });
+    log.debug('api req done');
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return body as D;
   } catch (err: unknown) {
-    throw new Error(`Datasource err: ${errToStr(err)}`);
+    if (retry >= maxRetryCount) throw new DatasourceError(`${errToStr(err)}`);
+    const waitMs = 2 ** retry * 100;
+    log.debug('api req err, retry', { method, path, data, retry, waitMs });
+    await wait(waitMs);
+    return apiReq({ path, method, data, retry: retry + 1 });
   }
 };
 
+const getCars = async (): Promise<EquipmentDataSourceCar[]> => apiReq({ path: 'getcars' });
+
 const getCoordinates = async (ids: string[]) => {
-  const url = 'http://admin.logistika.org.ua:1999/getcoordcar';
-  try {
-    const { data } = await axios({ url, method: 'POST', data: ids.join('%') });
-    return parseCoordinatesResp(data);
-  } catch (err: unknown) {
-    throw new Error(`Datasource err: ${errToStr(err)}`);
-  }
+  const data = await apiReq<string>({ method: 'post', path: 'getcoordcar', data: ids.join('%') });
+  return parseCoordinatesResp(data);
 };
+
+// const getCoordinates = async (ids: string[]) => {
+//   const url = 'http://admin.logistika.org.ua:1999/getcoordcar';
+//   try {
+//     const { data } = await axios({ url, method: 'POST', data: ids.join('%') });
+//     return parseCoordinatesResp(data);
+//   } catch (err: unknown) {
+//     throw new Error(`Datasource err: ${errToStr(err)}`);
+//   }
+// };
 
 const parseCoordinatesResp = (data: string) => {
   if (!data) return [];

@@ -1,11 +1,12 @@
 import { config } from '@config';
 import { initMongoClient, log } from '@core';
-import { api } from '@lib';
+import { api, DatasourceError } from '@lib';
 import * as Sentry from '@sentry/node';
 import {
   errToStr,
   HttpQs,
   isStr,
+  sendDatasourceErr,
   sendErr,
   sendInternalServerErr,
   sendNotFoundErr,
@@ -62,11 +63,14 @@ const handler = (db: Db) => async (req: IncomingMessage, res: ServerResponse) =>
   const { pathname = '', query = {} } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
   try {
-    if (req.method === 'GET' && pathname === '/equipment') return handleList(res);
-    if (req.method === 'GET' && pathname === '/equipment/log') return handleLog(db)(res, query);
+    if (req.method === 'GET' && pathname === '/equipment') return await handleList(res);
+    if (req.method === 'GET' && pathname === '/equipment/log') return await handleLog(db)(res, query);
     // Default respond
     return sendNotFoundErr(res, 'Endpoint not found');
   } catch (err: unknown) {
+    if (err instanceof DatasourceError) {
+      return sendDatasourceErr(res, err.message);
+    }
     Sentry.captureException(err);
     return sendInternalServerErr(res, errToStr(err));
   }

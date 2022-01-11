@@ -1,0 +1,38 @@
+{
+  "name": "kremen-cinemas-api",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn start:prd",
+    "start:prd": "micro -l tcp://0.0.0.0:${PORT-8080} dist/index.js",
+    "start:dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && yarn micro-dev -p 8080 -s dist/index.js\"",
+    "dist": "tsc && tsc-alias",
+    "lint": "yarn lint:types && yarn lint:eslint",
+    "lint:types": "tsc --noEmit --skipLibCheck",
+    "lint:eslint": "eslint \"src/**\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@sentry/node": "6.16.0",
+    "@sentry/tracing": "6.16.0",
+    "axios": "0.24.0",
+    "cheerio": "1.0.0-rc.10",
+    "joi": "17.5.0",
+    "lodash": "4.17.21",
+    "micro": "9.3.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "4.14.177",
+    "@types/micro": "7.3.6",
+    "@types/randomcolor": "0.5.6",
+    "@typescript-eslint/eslint-plugin": "5.4.0",
+    "@typescript-eslint/parser": "5.4.0",
+    "eslint": "8.3.0",
+    "micro-dev": "3.0.0",
+    "nodemon": "2.0.15",
+    "prettier": "2.4.1",
+    "tsc-alias": "1.4.1",
+    "typescript": "4.5.2"
+  }
+}

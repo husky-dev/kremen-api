@@ -1,0 +1,13 @@
+.editorconfig
+.eslintignore
+.eslintrc.js
+.git/
+.gitignore
+.husky/
+.prettierrc.js
+.wiki/
+CHANGELOG.md
+dist/
+docker-compose.*
+node_modules/
+README.md

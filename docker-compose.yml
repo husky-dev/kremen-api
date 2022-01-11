@@ -12,6 +12,7 @@ services:
       - transport-api
       - equipment-web
       - equipment-api
+      - cinemas-api
       - watchman
     volumes:
       - 'ssl:/etc/letsencrypt'
@@ -36,7 +37,7 @@ services:
       - mongo
       - redis
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=prd
       - LOG_LEVEL=info
       - SENTRY_DSN=$WATCHMAN_API_SENTRY_DSN
     restart: always
@@ -52,7 +53,7 @@ services:
     container_name: transport-api
     hostname: transport-api
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=prd
       - LOG_LEVEL=info
       - SENTRY_DSN=$TRANSPORT_API_SENTRY_DSN
     restart: always
@@ -68,9 +69,19 @@ services:
     container_name: equipment-api
     hostname: equipment-api
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=prd
       - LOG_LEVEL=info
       - SENTRY_DSN=$EQUIPMENT_API_SENTRY_DSN
+    restart: always
+
+  cinemas-api:
+    image: ghcr.io/husky-dev/kremen-api/cinemas-api:latest
+    container_name: cinemas-api
+    hostname: cinemas-api
+    environment:
+      - NODE_ENV=prd
+      - LOG_LEVEL=info
+      - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
     restart: always
 
   redis:

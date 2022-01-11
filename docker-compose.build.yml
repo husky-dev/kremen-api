@@ -16,6 +16,11 @@ services:
     image: ghcr.io/husky-dev/kremen-api/equipment-api:latest
     build:
       context: ./services/equipment
+
+  cinemas-api:
+    image: ghcr.io/husky-dev/kremen-api/cinemas-api:latest
+    build:
+      context: ./services/cinemas
   
   watchman:
     image: ghcr.io/husky-dev/kremen-api/watchman:latest

@@ -205,7 +205,7 @@ const movieInfoFieldsToObj = (arr: { name: string; value: string }[]) => {
     else if (modName.indexOf(`країна`) !== -1) obj.country = parseStr(value);
     else if (modName.indexOf(`тривалість`) !== -1) obj.duration = parseStr(value);
     else if (modName.indexOf(`вікові обмеження`) !== -1) obj.restrictions = parseStr(value);
-    else if (modName.indexOf(`прокат`) !== -1) obj.starts = parseStr(value);
+    else if (modName.indexOf(`прокат`) !== -1) obj.start = parseStr(value);
     else if (modName.indexOf(`студія`) !== -1) obj.studio = parseStr(value);
     else custom[modName] = parseStr(value);
   }

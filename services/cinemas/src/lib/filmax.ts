@@ -4,20 +4,21 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { CheerioAPI, Element } from 'cheerio';
 import Joi from 'joi';
-import { DatasourceError } from './utils';
+import { KremenCinema, KremenCinemaMovie, KremenCinemaMovieType } from './types';
+import { DatasourceError, parseCommaSepStr, parseStr } from './utils';
 
 const log = Log('lib.filmax');
 
 const cookies =
   'locChose=435ddc275a03c43b535e95843b6ab32f7e1a0c570483826f8ed5167dc61c7889a%3A2%3A%7Bi%3A0%3Bs%3A8%3A%22locChose%22%3Bi%3A1%3Bi%3A1%3B%7D; region=dd65784c8dc0ca20d697e25fede51dba12a93d7853035642cf74fd5345211d48a%3A2%3A%7Bi%3A0%3Bs%3A6%3A%22region%22%3Bi%3A1%3Bs%3A1%3A%227%22%3B%7D';
 
-export const getCinema = async () => {
-  const movies = await getMovines();
-  return {
+export const getCinema = async (): Promise<KremenCinema> => {
+  const data: KremenCinema = {
     id: 'filmax',
     title: 'Filmax',
     logo: 'https://filmax.ua/movies/img/filmax-logo.png',
     address: 'Проспект Лесі Українки, 96, Кременчук, Полтавська область, 39600',
+    website: 'https://filmax.ua/',
     location: {
       lat: 49.121436,
       lng: 33.4379874,
@@ -26,33 +27,40 @@ export const getCinema = async () => {
       { type: 'phone', value: '+380997362975' },
       { type: 'instagram', value: 'https://www.instagram.com/filmax.kremenchuk/' },
     ],
-    movies,
+    movies: [],
   };
+  try {
+    const movies = await getMovies();
+    return { ...data, movies };
+  } catch (err: unknown) {
+    log.err('getting filmax data err', { msg: errToStr(err) });
+    return data;
+  }
 };
 
-const getMovines = async () => {
+const getMovies = async () => {
   const html = await getSourceData<string>({ url: 'https://filmax.ua' });
   const $ = cheerio.load(html);
   const sections = $('.page__content section.cards').toArray();
   const arrs = await Promise.all(sections.map(itm => parseHomePageSection($, itm)));
-  const data = [];
+  const data: KremenCinemaMovie[] = [];
   for (const arr of arrs) {
     data.push(...arr);
   }
   return data;
 };
 
-const parseHomePageSection = async ($: CheerioAPI, el: Element) => {
+const parseHomePageSection = async ($: CheerioAPI, el: Element): Promise<KremenCinemaMovie[]> => {
   const title = $('h2', el).text();
-  const type = parseHomePageSessionTitle(title);
+  const type = parseHomePageSessionTitle(title) || 'coming';
   const cards = $('article.preview-card', el).toArray();
-  const movies = await Promise.all(cards.map(itm => parseHomePageMovie($, itm)));
+  const movies = await Promise.all(cards.map(itm => parseHomePageMovie($, itm, type)));
   return movies.map(itm => ({ ...itm, type }));
 };
 
-const parseHomePageMovie = async ($: CheerioAPI, el: Element) => {
+const parseHomePageMovie = async ($: CheerioAPI, el: Element, type: KremenCinemaMovieType): Promise<KremenCinemaMovie> => {
   const title = $('h3 a', el).text();
-  const url = parseUrl($('h3 a', el).attr('href'));
+  const url = parseUrl($('h3 a', el).attr('href')) || '';
   const id = urlToMovideId(url);
   const poster = parseUrl($('picture img', el).attr('src'));
   let proposals: unknown[] = [];
@@ -72,10 +80,10 @@ const parseHomePageMovie = async ($: CheerioAPI, el: Element) => {
   } catch (err: unknown) {
     log.err('getting movie info err', { id, title, url, msg: errToStr(err) });
   }
-  return { id, title, url, poster, ...info, proposals };
+  return { id: `${id}`, type, title, url, poster, ...info, proposals };
 };
 
-const parseHomePageSessionTitle = (val: string) => {
+const parseHomePageSessionTitle = (val: string): KremenCinemaMovieType | undefined => {
   if (val.toLowerCase().indexOf('зараз') >= 0) return 'going';
   if (val.toLowerCase().indexOf('скоро') >= 0) return 'coming';
   return undefined;
@@ -190,7 +198,7 @@ const parseMovieInfoSection = ($: CheerioAPI, el: cheerio.Cheerio<Element>) => {
 };
 
 const movieInfoFieldsToObj = (arr: { name: string; value: string }[]) => {
-  const obj: Record<string, string | string[] | number> = {};
+  const obj: Partial<KremenCinemaMovie> = {};
   const custom: Record<string, string> = {};
   for (const itm of arr) {
     const { name, value } = itm;
@@ -199,7 +207,7 @@ const movieInfoFieldsToObj = (arr: { name: string; value: string }[]) => {
     if (modName.indexOf('формат') !== -1) obj.format = parseStr(value);
     else if (modName.indexOf('рік') !== -1) obj.year = parseInt(value, 10);
     else if (modName.indexOf('мова') !== -1) obj.language = parseStr(value);
-    else if (modName.indexOf('жанр') !== -1) obj.genre = parseGenre(value);
+    else if (modName.indexOf('жанр') !== -1) obj.genre = parseCommaSepStr(parseStr(value), { toLower: true });
     else if (modName.indexOf('режисер') !== -1) obj.director = parseStr(value);
     else if (modName.indexOf(`дистриб'ютор`) !== -1) obj.distributor = parseStr(value);
     else if (modName.indexOf(`країна`) !== -1) obj.country = parseStr(value);
@@ -211,10 +219,6 @@ const movieInfoFieldsToObj = (arr: { name: string; value: string }[]) => {
   }
   return Object.keys(custom).length ? { ...obj, custom } : obj;
 };
-
-const parseStr = (val: string) => val.trim();
-
-const parseGenre = (val: string) => val.split(',').map(itm => itm.trim().toLowerCase());
 
 // Utils
 

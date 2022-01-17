@@ -10,7 +10,7 @@ import {
   KremenCinemaSession,
 } from './types';
 import * as cheerio from 'cheerio';
-import { getPageContent, parseCommaSepStr, parseStr } from './utils';
+import { getPageContent, parseCommaSepStr, parseStr, parseTrailerUrl, simplifyMovieTitle } from './utils';
 import { CheerioAPI, Element } from 'cheerio';
 
 const log = Log('lib.galaxy');
@@ -78,7 +78,7 @@ const getMovieDataFromPage = async (url: string, type: KremenCinemaMovieType): P
   const id = parseMovieIdFromUrl(url);
   const title = parseStr($('h1').text());
   const poster = fixUrlPath($('.kino img').attr('src'));
-  const trailer = $('.trailer iframe').attr('src');
+  const trailer = parseTrailerUrl($('.trailer iframe').attr('src'));
   const description = parseStr($('.description').text());
   const info = getMovieInfo($);
   return { id, title, type, url, poster, trailer, description, ...info, proposals: [] };
@@ -188,10 +188,10 @@ const parsePrices = (val: string): KremenCinemaPrices => {
 };
 
 const getProposalsForMovie = (movie: KremenCinemaMovie, proposals: Proposal[]): KremenCinemaProposal[] => {
-  const title = simplifyTitle(movie.title);
+  const title = simplifyMovieTitle(movie.title);
   const items: KremenCinemaProposal[] = [];
   for (const proposal of proposals) {
-    const propSessions = proposal.sessions.filter(session => simplifyTitle(session.title) === title);
+    const propSessions = proposal.sessions.filter(session => simplifyMovieTitle(session.title) === title);
     if (!propSessions.length) continue;
     const { hallId, hallScheme, description } = proposal;
     const sessions: KremenCinemaSession[] = propSessions.map(({ title, ...data }) => data);
@@ -200,12 +200,6 @@ const getProposalsForMovie = (movie: KremenCinemaMovie, proposals: Proposal[]): 
   }
   return items;
 };
-
-const simplifyTitle = (val: string) =>
-  val
-    .trim()
-    .toLowerCase()
-    .replace(/[^A-zА-я]+/, '');
 
 // Utils
 

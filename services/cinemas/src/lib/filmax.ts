@@ -13,7 +13,7 @@ import {
   KremenCinemaProposal,
   KremenCinemaSession,
 } from './types';
-import { DatasourceError, parseCommaSepStr, parseStr } from './utils';
+import { DatasourceError, parseCommaSepStr, parseStr, parseTrailerUrl } from './utils';
 
 const log = Log('lib.filmax');
 
@@ -200,7 +200,7 @@ const getMovideInfo = async (url: string): Promise<Partial<KremenCinemaMovie>> =
   const title = $('.film__main-title').first().text();
   const description = $('.film__description').text();
   const poster = parseUrl($('.film__poster-image img').attr('src'));
-  const trailer = parseUrl($('.film__to-trailer').attr('href'));
+  const trailer = parseTrailerUrl(parseUrl($('.film__to-trailer').attr('href')));
   const info = parseMovieInfoSection($, $('.film__info').first());
   return { title, description, poster, trailer, ...info };
 };

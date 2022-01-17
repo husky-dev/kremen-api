@@ -67,3 +67,17 @@ export const parseCommaSepStr = (val: string, opt: { toLower: boolean } = { toLo
     .split(',')
     .map(itm => itm.trim())
     .map(itm => (opt.toLower ? itm.toLowerCase() : itm));
+
+export const parseTrailerUrl = (url?: string) => {
+  if (!url) return undefined;
+  const match = /youtube\.com\/embed\/([\w\d-]+?)$/g.exec(url);
+  if (match) {
+    return `https://www.youtube.com/watch?v=${match[1]}`;
+  } else return url;
+};
+
+export const simplifyMovieTitle = (val: string) =>
+  val
+    .trim()
+    .toLowerCase()
+    .replace(/[^A-zА-я]+/, '');

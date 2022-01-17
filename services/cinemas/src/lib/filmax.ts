@@ -1,10 +1,18 @@
 import { Log } from '@core';
-import { errToStr, isStr, isUnknownDict, joiErrToStr, UnknowDict, wait } from '@utils';
+import { compact, errToStr, isStr, isUnknownDict, joiErrToStr, wait } from '@utils';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { CheerioAPI, Element } from 'cheerio';
 import Joi from 'joi';
-import { KremenCinema, KremenCinemaMovie, KremenCinemaMovieType } from './types';
+import {
+  KremenCinema,
+  KremenCinemaMovie,
+  KremenCinemaMovieFormat,
+  KremenCinemaMovieType,
+  KremenCinemaPrices,
+  KremenCinemaProposal,
+  KremenCinemaSession,
+} from './types';
 import { DatasourceError, parseCommaSepStr, parseStr } from './utils';
 
 const log = Log('lib.filmax');
@@ -13,7 +21,7 @@ const cookies =
   'locChose=435ddc275a03c43b535e95843b6ab32f7e1a0c570483826f8ed5167dc61c7889a%3A2%3A%7Bi%3A0%3Bs%3A8%3A%22locChose%22%3Bi%3A1%3Bi%3A1%3B%7D; region=dd65784c8dc0ca20d697e25fede51dba12a93d7853035642cf74fd5345211d48a%3A2%3A%7Bi%3A0%3Bs%3A6%3A%22region%22%3Bi%3A1%3Bs%3A1%3A%227%22%3B%7D';
 
 export const getCinema = async (): Promise<KremenCinema> => {
-  const data: KremenCinema = {
+  const data: Omit<KremenCinema, 'movies'> = {
     id: 'filmax',
     title: 'Filmax',
     logo: 'https://filmax.ua/movies/img/filmax-logo.png',
@@ -27,14 +35,13 @@ export const getCinema = async (): Promise<KremenCinema> => {
       { type: 'phone', value: '+380997362975' },
       { type: 'instagram', value: 'https://www.instagram.com/filmax.kremenchuk/' },
     ],
-    movies: [],
   };
   try {
     const movies = await getMovies();
     return { ...data, movies };
   } catch (err: unknown) {
     log.err('getting filmax data err', { msg: errToStr(err) });
-    return data;
+    return { ...data, movies: [] };
   }
 };
 
@@ -63,16 +70,16 @@ const parseHomePageMovie = async ($: CheerioAPI, el: Element, type: KremenCinema
   const url = parseUrl($('h3 a', el).attr('href')) || '';
   const id = urlToMovideId(url);
   const poster = parseUrl($('picture img', el).attr('src'));
-  let proposals: unknown[] = [];
+  let proposals: KremenCinemaProposal[] = [];
   try {
     if (id) {
       const schedule = await getSchedule(id);
-      proposals = schedule.data.map(parseDSSession);
+      proposals = schedule.data.map(parseSession);
     }
   } catch (err: unknown) {
     log.err('getting movie schedule err', { id, title, url, msg: errToStr(err) });
   }
-  let info: UnknowDict = {};
+  let info: Partial<KremenCinemaMovie> = {};
   try {
     if (url) {
       info = await getMovideInfo(url);
@@ -101,23 +108,31 @@ const urlToMovideId = (val?: string): number | undefined => {
   return match ? parseInt(match[1], 10) : undefined;
 };
 
-const parseDSSession = (val: DSGetScheduleSessions) => {
-  const { id, cinema_hall_id, price, price_stock, format_id, vip, date_data } = val;
-  const features: string[] = [];
-  if (vip) features.push('vip');
-  if (format_id === 0) features.push('2D');
-  if (format_id === 1) features.push('3D');
-  return {
-    id,
-    hallId: cinema_hall_id,
-    price: parseDSPrice(price),
-    priceStock: parseDSPrice(price_stock),
-    features,
-    sessions: date_data,
-  };
+const parseSession = (val: DSGetScheduleSessions): KremenCinemaProposal => {
+  const { id, cinema_hall_id: hallId, price, price_stock, format_id, vip, date_data } = val;
+  const prices: KremenCinemaPrices = { stock: parsePrice(price_stock) };
+  if (vip === 1) prices.vip = parsePrice(price);
+  else prices.usual = parsePrice(price);
+  const format: KremenCinemaMovieFormat = format_id === 0 ? '2D' : '3D';
+  const sessions: (KremenCinemaSession | undefined)[] = date_data.map(itm => {
+    const date = parseDateDataItem(itm);
+    return date ? { ...date, prices, format } : undefined;
+  });
+  return { id: `${id}`, hallId, sessions: compact(sessions) };
 };
 
-const parseDSPrice = (val: string) => {
+const parseDateDataItem = (val: string): { date: string; time: string } | undefined => {
+  const m = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/g.exec(val);
+  if (!m) {
+    log.warn('parsing date date item err', { val: val });
+    return undefined;
+  }
+  const date = `${m[1]}-${m[2]}-${m[3]}`;
+  const time = `${m[4]}:${m[5]}:${m[6]}`;
+  return { date, time };
+};
+
+const parsePrice = (val: string) => {
   if (!val) return undefined;
   const num = parseInt(val, 10);
   return !isNaN(num) ? num : undefined;
@@ -179,7 +194,7 @@ export const isDSGetScheduleErr = (val: unknown): val is DSGetScheduleErr =>
 
 // Movie
 
-const getMovideInfo = async (url: string) => {
+const getMovideInfo = async (url: string): Promise<Partial<KremenCinemaMovie>> => {
   const html = await getSourceData<string>({ url });
   const $ = cheerio.load(html);
   const title = $('.film__main-title').first().text();
@@ -190,14 +205,14 @@ const getMovideInfo = async (url: string) => {
   return { title, description, poster, trailer, ...info };
 };
 
-const parseMovieInfoSection = ($: CheerioAPI, el: cheerio.Cheerio<Element>) => {
+const parseMovieInfoSection = ($: CheerioAPI, el: cheerio.Cheerio<Element>): Partial<KremenCinemaMovie> => {
   const items = $('.film__info-group', el).toArray();
   if (!items.length) return {};
   const arr = items.map(itm => ({ name: $('dt', itm).text(), value: $('dd', itm).text() }));
   return movieInfoFieldsToObj(arr);
 };
 
-const movieInfoFieldsToObj = (arr: { name: string; value: string }[]) => {
+const movieInfoFieldsToObj = (arr: { name: string; value: string }[]): Partial<KremenCinemaMovie> => {
   const obj: Partial<KremenCinemaMovie> = {};
   const custom: Record<string, string> = {};
   for (const itm of arr) {

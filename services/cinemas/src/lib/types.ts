@@ -40,7 +40,31 @@ export interface KremenCinemaMovie {
   start?: string;
   studio?: string;
   custom?: Record<string, string>;
-  proposals: unknown[];
+  proposals: KremenCinemaProposal[];
 }
 
 export type KremenCinemaMovieType = 'going' | 'coming';
+
+export interface KremenCinemaProposal {
+  id: string;
+  hallId: number;
+  hallScheme?: string;
+  description?: string;
+  sessions: KremenCinemaSession[];
+}
+
+export interface KremenCinemaSession {
+  date: string;
+  time: string;
+  format: KremenCinemaMovieFormat;
+  prices: KremenCinemaPrices;
+  features?: string[];
+}
+
+export type KremenCinemaMovieFormat = '2D' | '3D';
+
+export interface KremenCinemaPrices {
+  usual?: number;
+  vip?: number;
+  stock?: number;
+}

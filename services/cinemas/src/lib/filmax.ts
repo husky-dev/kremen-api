@@ -1,6 +1,5 @@
 import { Log } from '@core';
-import { compact, errToStr, isStr, isUnknownDict, joiErrToStr, wait } from '@utils';
-import axios from 'axios';
+import { compact, errToStr, isStr, isUnknownDict, joiErrToStr } from '@utils';
 import * as cheerio from 'cheerio';
 import { CheerioAPI, Element } from 'cheerio';
 import Joi from 'joi';
@@ -13,7 +12,7 @@ import {
   KremenCinemaProposal,
   KremenCinemaSession,
 } from './types';
-import { DatasourceError, parseCommaSepStr, parseStr, parseTrailerUrl } from './utils';
+import { getPageContent, parseCommaSepStr, parseStr, parseTrailerUrl } from './utils';
 
 const log = Log('lib.filmax');
 
@@ -46,7 +45,7 @@ export const getCinema = async (): Promise<KremenCinema> => {
 };
 
 const getMovies = async () => {
-  const html = await getSourceData<string>({ url: 'https://filmax.ua' });
+  const html = await getPageContent<string>({ url: 'https://filmax.ua', cookies });
   const $ = cheerio.load(html);
   const sections = $('.page__content section.cards').toArray();
   const arrs = await Promise.all(sections.map(itm => parseHomePageSection($, itm)));
@@ -142,15 +141,13 @@ const parsePrice = (val: string) => {
 
 const getSchedule = async (id: number): Promise<DSGetScheduleResp> => {
   const url = `https://filmax.ua/movie-schedule/${id}`;
-  const data = await getSourceData<DSGetScheduleResp>({ url });
+  const data = await getPageContent<DSGetScheduleResp>({ url, cookies });
   const { error: validationErr } = DSGetScheduleRespSchema.validate(data);
   if (validationErr) {
     log.warn('wrong schedule format', { msg: joiErrToStr(validationErr) });
   }
   return data;
 };
-
-const isStatus200 = (val: number) => val >= 200 && val <= 299;
 
 interface DSGetScheduleSessions {
   id: number;
@@ -195,7 +192,7 @@ export const isDSGetScheduleErr = (val: unknown): val is DSGetScheduleErr =>
 // Movie
 
 const getMovideInfo = async (url: string): Promise<Partial<KremenCinemaMovie>> => {
-  const html = await getSourceData<string>({ url });
+  const html = await getPageContent<string>({ url, cookies });
   const $ = cheerio.load(html);
   const title = $('.film__main-title').first().text();
   const description = $('.film__description').text();
@@ -233,33 +230,4 @@ const movieInfoFieldsToObj = (arr: { name: string; value: string }[]): Partial<K
     else custom[modName] = parseStr(value);
   }
   return Object.keys(custom).length ? { ...obj, custom } : obj;
-};
-
-// Utils
-
-interface HtmlReqOpt {
-  url: string;
-  retry?: number;
-}
-
-const getSourceData = async <D>({ url, retry = 0 }: HtmlReqOpt): Promise<D> => {
-  const headers = { Cookie: cookies };
-  try {
-    const { data: body, status, statusText } = await axios({ url, headers, validateStatus: () => true });
-    if (!isStatus200(status)) {
-      if (isDSGetScheduleErr(body)) {
-        throw new DatasourceError(body.message);
-      } else if (isStr(body)) {
-        throw new DatasourceError(body);
-      } else {
-        throw new DatasourceError(statusText);
-      }
-    }
-    return body;
-  } catch (err: unknown) {
-    const waitMs = 2 ** retry * 100;
-    log.debug('datasource req err, retry', { url, waitMs });
-    await wait(waitMs);
-    return getSourceData({ url, retry: retry + 1 });
-  }
 };

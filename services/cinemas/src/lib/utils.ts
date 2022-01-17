@@ -5,20 +5,18 @@ import iconv from 'iconv-lite';
 
 const log = Log('lib.utils');
 
-// const win1251ToUtf8Conv = Iconv('windows-1251', 'utf8');
-
-export class DatasourceError extends Error {
-  constructor(message: string) {
-    super(message);
-  }
-}
-
 // Getting data
 
 interface HtmlReqOpt {
   url: string;
   cookies?: string;
   retry?: number;
+}
+
+export class DatasourceError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
 }
 
 export const getPageContent = async <D>({ url, cookies, retry = 0 }: HtmlReqOpt): Promise<D> => {
@@ -30,10 +28,16 @@ export const getPageContent = async <D>({ url, cookies, retry = 0 }: HtmlReqOpt)
     responseType: 'arraybuffer',
     transformResponse: (data, headers) => {
       const contentType = headers ? headers['content-type'] : undefined;
-      if (contentType && contentType.indexOf('1251') !== -1) {
-        return iconv.decode(Buffer.from(data), 'windows-1251').toString();
+      let content: string = '';
+      if (contentType && contentType.indexOf('charset=CP1251') !== -1) {
+        content = iconv.decode(Buffer.from(data), 'windows-1251').toString();
       } else {
-        return Buffer.from(data).toString('utf8');
+        content = Buffer.from(data).toString('utf8');
+      }
+      if (contentType && contentType.indexOf('application/json') !== -1) {
+        return JSON.parse(content);
+      } else {
+        return content;
       }
     },
     validateStatus: () => true,

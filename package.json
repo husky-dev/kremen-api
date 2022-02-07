@@ -7,6 +7,18 @@
   "scripts": {
     "version:patch": "npm version patch",
     "version:minor": "npm version minor",
-    "version:major": "npm version major"
+    "version:major": "npm version major",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "{*.ts,*tsx}": [
+      "prettier --write \"**/*.{ts,tsx}\""
+    ]
+  },
+  "devDependencies": {
+    "husky": "7.0.4",
+    "lint-staged": "12.3.3",
+    "prettier": "2.5.1"
   }
 }

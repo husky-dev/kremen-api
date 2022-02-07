@@ -1,6 +1,5 @@
 FROM node:14-alpine3.10 AS builder
 
-ENV NODE_ENV=prd
 WORKDIR /usr/src/app
 COPY package.json yarn.lock tsconfig.json ./
 RUN yarn install

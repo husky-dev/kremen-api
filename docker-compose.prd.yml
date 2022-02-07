@@ -86,7 +86,7 @@ services:
     restart: always
 
   cinemas-bot:
-    image: ghcr.io/husky-dev/kremen-api/cinemas-ds:latest
+    image: ghcr.io/husky-dev/kremen-api/cinemas-bot:latest
     container_name: cinemas-bot
     hostname: cinemas-bot
     depends_on:

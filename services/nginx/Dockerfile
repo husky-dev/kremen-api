@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:11.2
 
 LABEL org.opencontainers.image.source https://github.com/husky-dev/kremen-api
 
@@ -49,4 +49,4 @@ STOPSIGNAL SIGQUIT
 
 CMD ["nginx", "-g", "daemon off;"]
 
-COPY conf/production /etc/nginx/conf.d
+COPY conf/prd /etc/nginx/conf.d

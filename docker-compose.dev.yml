@@ -11,6 +11,7 @@ services:
       - transport-ds
       - equipment-ds
       - cinemas-ds
+      - cinemas-bot
       - watchman
       - redis
     volumes:
@@ -61,6 +62,22 @@ services:
       - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
     ports:
       - '8083:8080'
+    command: 'yarn start:dev'
+
+  cinemas-bot:
+    image: node:14-alpine3.10
+    container_name: cinemas-bot
+    hostname: cinemas-bot
+    working_dir: '/usr/src/app'
+    volumes:
+      - './services/cinemas-bot:/usr/src/app'
+    environment:
+      - NODE_ENV=dev
+      - LOG_LEVEL=debug
+      - BOT_TOKEN=$CINEMAS_BOT_TOKEN
+      - BOT_WEBHOOK=$CINEMAS_BOT_WEBHOOK
+    ports:
+      - '8084:8080'
     command: 'yarn start:dev'
 
   watchman:

@@ -1,7 +1,9 @@
-# #Kremen.Transport API
+# #Kremen.Cinemas bot
 
-## Enviroments
+## Set webhook
 
-- `NODE_ENV` - `dev` or `prd` (default `prd`)
-- `PORT` - default `8080`
-- `LOG_LEVEL` - `none`, `err`, `warn`, `info`, `debug`, `trace` (default `err`)
+```bash
+BOT_TOKEN=token && \
+BOT_WEBHOOK=webhook && \
+curl "https://api.telegram.org/bot$BOT_TOKEN/setWebhook?url=$BOT_WEBHOOK"
+```

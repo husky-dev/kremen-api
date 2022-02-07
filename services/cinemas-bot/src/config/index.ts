@@ -1,4 +1,4 @@
-import { getAppEnv, getAppName, getAppVersion, getLogLevelEnv, getNumEnv } from './utils';
+import { getAppEnv, getAppName, getAppVersion, getLogLevelEnv, getNumEnv, getStrEnvOrExit } from './utils';
 
 export const config = {
   env: getAppEnv(),
@@ -7,6 +7,10 @@ export const config = {
   port: getNumEnv('PORT', 8080),
   log: {
     level: getLogLevelEnv('LOG_LEVEL', 'info'),
+  },
+  bot: {
+    token: getStrEnvOrExit('BOT_TOKEN'),
+    webhook: getStrEnvOrExit('BOT_WEBHOOK'),
   },
 };
 

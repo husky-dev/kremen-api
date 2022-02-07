@@ -13,6 +13,7 @@ services:
       - equipment-web
       - equipment-ds
       - cinemas-ds
+      - cinemas-bot
       - watchman
     volumes:
       - 'ssl:/etc/letsencrypt'
@@ -82,6 +83,19 @@ services:
       - NODE_ENV=prd
       - LOG_LEVEL=info
       - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
+    restart: always
+
+  cinemas-bot:
+    image: ghcr.io/husky-dev/kremen-api/cinemas-ds:latest
+    container_name: cinemas-bot
+    hostname: cinemas-bot
+    depends_on:
+      - cinemas-ds
+    environment:
+      - NODE_ENV=prd
+      - LOG_LEVEL=info
+      - BOT_TOKEN=$CINEMAS_BOT_TOKEN
+      - BOT_WEBHOOK=$CINEMAS_BOT_WEBHOOK
     restart: always
 
   redis:

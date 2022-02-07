@@ -13,7 +13,7 @@ services:
       - equipment-web
       - equipment-ds
       - cinemas-ds
-      - cinemas-bot
+      - cinemas-api
       - watchman
     volumes:
       - 'ssl:/etc/letsencrypt'
@@ -85,10 +85,10 @@ services:
       - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
     restart: always
 
-  cinemas-bot:
-    image: ghcr.io/husky-dev/kremen-api/cinemas-bot:latest
-    container_name: cinemas-bot
-    hostname: cinemas-bot
+  cinemas-api:
+    image: ghcr.io/husky-dev/kremen-api/cinemas-api:latest
+    container_name: cinemas-api
+    hostname: cinemas-api
     depends_on:
       - cinemas-ds
     environment:

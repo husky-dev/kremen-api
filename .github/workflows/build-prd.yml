@@ -1,0 +1,48 @@
+name: Build PRD
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: 'Env: set package version'
+      run: >
+        echo "VERSION=$(cat package.json | grep version | head -1 | awk
+        -F: '{ print $2 }' | sed 's/[",\t ]//g')" >> $GITHUB_ENV
+    - name: 'Docker: login'
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.CR_PAT }}
+    - name: 'Docker: build'
+      run: |
+        docker build -t ghcr.io/husky-dev/kremen-api/nginx:latest ./services/nginx
+        docker build -t ghcr.io/husky-dev/kremen-api/transport-ds:latest ./services/transport-ds
+        docker build -t ghcr.io/husky-dev/kremen-api/equipment-ds:latest ./services/equipment-ds
+        docker build -t ghcr.io/husky-dev/kremen-api/cinemas-ds:latest ./services/cinemas-ds
+        docker build -t ghcr.io/husky-dev/kremen-api/watchman:latest ./services/watchman
+        docker build -t ghcr.io/husky-dev/kremen-api/backup:latest ./services/backup
+    - name: 'Docker: push'
+      run: |
+        docker push ghcr.io/husky-dev/kremen-api/nginx:latest
+        docker push ghcr.io/husky-dev/kremen-api/transport-ds:latest
+        docker push ghcr.io/husky-dev/kremen-api/equipment-ds:latest
+        docker push ghcr.io/husky-dev/kremen-api/cinemas-ds:latest
+        docker push ghcr.io/husky-dev/kremen-api/watchman:latest
+        docker push ghcr.io/husky-dev/kremen-api/backup:latest
+    - name: 'Telegram: done'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        format: markdown
+        args: |
+          🏁 *kremen-api@${{ env.VERSION }}:* build finished

@@ -8,22 +8,23 @@ services:
     container_name: nginx
     hostname: nginx
     depends_on:
-      - transport-api
-      - equipment-api
+      - transport-ds
+      - equipment-ds
+      - cinemas-ds
       - watchman
       - redis
     volumes:
-      - ./services/nginx/conf/development:/etc/nginx/conf.d
+      - ./services/nginx/conf/dev:/etc/nginx/conf.d
     ports:
       - '80:80'
 
-  transport-api:
+  transport-ds:
     image: node:14-alpine3.10
-    container_name: transport-api
-    hostname: transport-api
+    container_name: transport-ds
+    hostname: transport-ds
     working_dir: '/usr/src/app'
     volumes:
-      - './services/transport:/usr/src/app'
+      - './services/transport-ds:/usr/src/app'
     environment:
       - NODE_ENV=dev
       - LOG_LEVEL=debug
@@ -32,13 +33,13 @@ services:
       - '8081:8080'
     command: 'yarn start:dev'
 
-  equipment-api:
+  equipment-ds:
     image: node:14-alpine3.10
-    container_name: equipment-api
-    hostname: equipment-api
+    container_name: equipment-ds
+    hostname: equipment-ds
     working_dir: '/usr/src/app'
     volumes:
-      - './services/equipment:/usr/src/app'
+      - './services/equipment-ds:/usr/src/app'
     environment:
       - NODE_ENV=dev
       - LOG_LEVEL=debug
@@ -47,13 +48,13 @@ services:
       - '8082:8080'
     command: 'yarn start:dev'
 
-  cinemas-api:
+  cinemas-ds:
     image: node:14-alpine3.10
-    container_name: cinemas-api
-    hostname: cinemas-api
+    container_name: cinemas-ds
+    hostname: cinemas-ds
     working_dir: '/usr/src/app'
     volumes:
-      - './services/cinemas:/usr/src/app'
+      - './services/cinemas-ds:/usr/src/app'
     environment:
       - NODE_ENV=dev
       - LOG_LEVEL=debug
@@ -70,8 +71,8 @@ services:
     volumes:
       - './services/watchman:/usr/src/app'
     depends_on:
-      - transport-api
-      - equipment-api
+      - transport-ds
+      - equipment-ds
       - mongo
       - redis
     environment:

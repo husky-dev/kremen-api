@@ -13,7 +13,7 @@
   },
   "lint-staged": {
     "{*.ts,*tsx}": [
-      "prettier --write \"**/*.{ts,tsx}\""
+      "yarn format"
     ]
   },
   "devDependencies": {

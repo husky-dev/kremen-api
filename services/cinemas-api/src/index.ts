@@ -14,7 +14,7 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
   const { pathname = '' } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
   try {
-    if (method === 'GET' && pathname === '/cinemas/bot/ping') {
+    if (method === 'GET' && pathname === '/cinemas/ping') {
       return await sendOk(res, { version: config.version });
     }
     if (method === 'POST' && pathname === `/cinemas/bot/${config.bot.webhook}`) {

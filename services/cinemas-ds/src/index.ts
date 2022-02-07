@@ -28,6 +28,7 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
     if (method === 'GET' && pathname === '/cinemas/galaxy') {
       return sendOk(res, await getGalaxyCinema());
     }
+
     // Default respond
     return sendNotFoundErr(res, 'Endpoint not found');
   } catch (err: unknown) {

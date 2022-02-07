@@ -75,16 +75,6 @@ services:
       - SENTRY_DSN=$EQUIPMENT_API_SENTRY_DSN
     restart: always
 
-  cinemas-ds:
-    image: ghcr.io/husky-dev/kremen-api/cinemas-ds:latest
-    container_name: cinemas-ds
-    hostname: cinemas-ds
-    environment:
-      - NODE_ENV=prd
-      - LOG_LEVEL=info
-      - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
-    restart: always
-
   cinemas-api:
     image: ghcr.io/husky-dev/kremen-api/cinemas-api:latest
     container_name: cinemas-api
@@ -96,6 +86,16 @@ services:
       - LOG_LEVEL=info
       - BOT_TOKEN=$CINEMAS_BOT_TOKEN
       - BOT_WEBHOOK=$CINEMAS_BOT_WEBHOOK
+    restart: always
+
+  cinemas-ds:
+    image: ghcr.io/husky-dev/kremen-api/cinemas-ds:latest
+    container_name: cinemas-ds
+    hostname: cinemas-ds
+    environment:
+      - NODE_ENV=prd
+      - LOG_LEVEL=info
+      - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
     restart: always
 
   redis:

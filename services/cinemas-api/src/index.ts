@@ -1,14 +1,15 @@
 import { config } from '@config';
-import { log } from '@core';
+import { initSentry, log } from '@core';
 import { cinemasBot } from '@lib';
 import { errToStr, sendInternalServerErr, sendNotFoundErr, sendOk } from '@utils';
-import { ServerResponse, IncomingMessage } from 'http';
-import { json } from 'micro';
+import { IncomingMessage, ServerResponse } from 'http';
+import micro, { json } from 'micro';
 import url from 'url';
 
+initSentry();
 log.info('config', config);
 
-export default async (req: IncomingMessage, res: ServerResponse) => {
+const handler = async (req: IncomingMessage, res: ServerResponse) => {
   const { method } = req;
 
   const { pathname = '' } = req.url ? url.parse(req.url, true) : {};
@@ -27,3 +28,7 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
     return sendInternalServerErr(res, errToStr(err));
   }
 };
+
+const server = micro(handler);
+log.info('starting server', { port: config.port });
+server.listen(config.port);

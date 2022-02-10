@@ -2,9 +2,10 @@
 import { config, LogLevel } from '@config';
 import { select } from '@utils';
 
+import { captureSentryMsg, Severity } from './sentry';
+
 const logLevelToNum = (val: LogLevel): number =>
   select(val, {
-    none: -1,
     err: 0,
     warn: 1,
     info: 2,
@@ -13,7 +14,6 @@ const logLevelToNum = (val: LogLevel): number =>
 
 const logLevelToSymbol = (val: LogLevel): string =>
   select(val, {
-    none: '',
     err: 'x',
     warn: '!',
     info: '+',
@@ -48,9 +48,11 @@ export const Log = (m?: string) => {
 
   return {
     err: (msg: string, meta?: unknown) => {
+      captureSentryMsg(msg, Severity.Error, meta);
       logWithOpt({ msg, meta, level: 'err' });
     },
     warn: (msg: string, meta?: unknown) => {
+      captureSentryMsg(msg, Severity.Warning, meta);
       logWithOpt({ msg, meta, level: 'warn' });
     },
     info: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'info' }),

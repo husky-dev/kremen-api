@@ -1,17 +1,17 @@
 import { Log } from '@core/log';
-import { isStr } from '@utils';
-import axios from 'axios';
-
 import {
+  Cinema,
   EquipmentLogQueryOpt,
   EquipmentLogRecord,
   EquipmentMachine,
-  KremenCinema,
   TransportBus,
   TransportBusesLocations,
   TransportPrediction,
   TransportRoute,
-} from './types';
+} from '@core/types';
+import { isStr } from '@utils';
+import axios from 'axios';
+
 import { ApiError, ApiReqOpt, isApiErrorResp, isStaus200 } from './utils';
 
 const log = Log('core.api');
@@ -54,10 +54,9 @@ export const getApi = ({ apiRoot }: ApiOpt) => {
         apiReq<EquipmentLogRecord[]>({ path: 'equipment/log', params: { format: 'array', ...opt } }),
     },
     cinemas: {
-      list: async (): Promise<KremenCinema[]> => apiReq<KremenCinema[]>({ path: `cinemas` }),
+      list: async (): Promise<Cinema[]> => apiReq<Cinema[]>({ path: `cinemas` }),
     },
   };
 };
 
-export * from './types';
 export * from './utils';

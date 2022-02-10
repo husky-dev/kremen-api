@@ -1,6 +1,7 @@
+/* eslint-disable max-len */
 import { config } from '@config';
 import { getTelegramApi, isBotCmd, Log, TGMessage, TGUpdate } from '@core';
-import { getApi, KremenCinema } from '@core/api';
+import { getApi, Cinema } from '@core';
 import { errToStr, isNum, isUnknownDict, unique } from '@utils';
 
 const commandsMsgText = `
@@ -67,7 +68,7 @@ const getBot = () => {
 
 const isTGUpdate = (val: unknown): val is TGUpdate => isUnknownDict(val) && isNum(val.update_id);
 
-const cinemasToMoviesMsg = (cinemas: KremenCinema[]): string => {
+const cinemasToMoviesMsg = (cinemas: Cinema[]): string => {
   const titles: string[] = [];
   for (const cinema of cinemas) {
     for (const movie of cinema.movies) {

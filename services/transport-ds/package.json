@@ -7,7 +7,7 @@
     "start": "yarn start:prd",
     "start:prd": "micro -l tcp://0.0.0.0:${PORT-8080} dist/index.js",
     "start:dev": "yarn install && nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && yarn micro-dev -p 8080 -s dist/index.js\"",
-    "dist": "esbuild src/index.ts --outfile=dist/index.js --bundle --sourcemap --platform=node --target=node17.4",
+    "dist": "esbuild src/index.ts --outfile=dist/index.js --bundle --sourcemap --minify --platform=node --target=node17.4",
     "lint": "yarn lint:types && yarn lint:eslint",
     "lint:types": "tsc --noEmit --skipLibCheck",
     "lint:eslint": "eslint \"src/**\""

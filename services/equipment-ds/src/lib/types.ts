@@ -1,5 +1,4 @@
-import { isNull } from 'lodash';
-import { isArr, isStr, isUndef, isUnknownDict } from '@utils';
+import { isArr, isNull, isStr, isUndef, isUnknownDict } from '@utils';
 
 export interface EquipmentDataSourceCar {
   name: string;

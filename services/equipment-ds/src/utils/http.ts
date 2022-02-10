@@ -1,6 +1,7 @@
 import { ServerResponse } from 'http';
-import { compact } from 'lodash';
 import { send } from 'micro';
+
+import { compact } from './types';
 
 export interface HttpQs {
   [key: string]: string | string[] | undefined;

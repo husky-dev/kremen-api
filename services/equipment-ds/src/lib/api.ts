@@ -1,8 +1,8 @@
 import { Log } from '@core';
 import { EquipmentDataSourceTimeEntryData, EquipmentMachine } from '@lib';
-import { errToStr, wait } from '@utils';
+import { compact, errToStr, wait } from '@utils';
 import axios, { AxiosRequestConfig } from 'axios';
-import { compact, maxBy } from 'lodash';
+import { maxBy } from 'lodash';
 import md5 from 'md5';
 import randomcolor from 'randomcolor';
 

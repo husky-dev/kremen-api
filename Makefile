@@ -1,4 +1,4 @@
-docker-build:
+build:
 	docker build -t ghcr.io/husky-dev/kremen-api/nginx:latest ./services/nginx
 	docker build -t ghcr.io/husky-dev/kremen-api/transport-ds:latest ./services/transport-ds
 	docker build -t ghcr.io/husky-dev/kremen-api/equipment-ds:latest ./services/equipment-ds
@@ -7,7 +7,7 @@ docker-build:
 	# docker build -t ghcr.io/husky-dev/kremen-api/watchman:latest ./services/watchman
 	docker build -t ghcr.io/husky-dev/kremen-api/backup:latest ./services/backup
 
-docker-push:
+push:
 	docker push ghcr.io/husky-dev/kremen-api/nginx:latest
 	docker push ghcr.io/husky-dev/kremen-api/transport-ds:latest
 	docker push ghcr.io/husky-dev/kremen-api/equipment-ds:latest
@@ -18,3 +18,4 @@ docker-push:
 
 sync:
 	rsync -aP ./common/ ./services/equipment-ds/src
+	rsync -aP ./common/ ./services/transport-ds/src

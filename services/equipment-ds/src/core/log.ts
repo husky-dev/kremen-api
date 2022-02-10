@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import { config, LogLevel } from '@config';
-import * as Sentry from '@sentry/node';
 import { select } from '@utils';
+
+import { captureSentryMsg, Severity } from './sentry';
 
 const logLevelToNum = (val: LogLevel): number =>
   select(val, {
@@ -47,11 +48,11 @@ export const Log = (m?: string) => {
 
   return {
     err: (msg: string, meta?: unknown) => {
+      captureSentryMsg(msg, Severity.Error, meta);
       logWithOpt({ msg, meta, level: 'err' });
     },
     warn: (msg: string, meta?: unknown) => {
-      const metaStr = meta ? `, ${JSON.stringify(meta)}` : '';
-      Sentry.captureMessage(`${msg}${metaStr}`, Sentry.Severity.Warning);
+      captureSentryMsg(msg, Severity.Warning, meta);
       logWithOpt({ msg, meta, level: 'warn' });
     },
     info: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'info' }),

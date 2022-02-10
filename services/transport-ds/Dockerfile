@@ -16,7 +16,6 @@ ENV PORT=8080
 EXPOSE 8080
 WORKDIR /usr/src/app
 
-RUN yarn global add micro@9.3.4
-COPY --from=builder /usr/src/app/dist ./dist
+CMD node --no-deprecation dist/index.js
 
-CMD node --no-deprecation /usr/local/bin/micro -l tcp://0.0.0.0:${PORT-8080} ./dist/index.js
+COPY --from=builder /usr/src/app/dist ./dist

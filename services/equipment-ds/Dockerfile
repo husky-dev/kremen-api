@@ -16,6 +16,6 @@ ENV PORT=8080
 EXPOSE 8080
 WORKDIR /usr/src/app
 
-COPY --from=builder /usr/src/app/dist ./dist
-
 CMD node --no-deprecation dist/index.js
+
+COPY --from=builder /usr/src/app/dist ./dist

@@ -17,6 +17,7 @@ import {
 } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
 import url from 'url';
+import micro from 'micro';
 
 initSentry();
 log.info('config', config);
@@ -82,7 +83,7 @@ const handleRouteStations = async (res: ServerResponse, query: HttpQs, { rid }: 
   return sendOk(res, data);
 };
 
-export default async (req: IncomingMessage, res: ServerResponse) => {
+const handler = async (req: IncomingMessage, res: ServerResponse) => {
   const { method } = req;
   const { pathname = '', query = {} } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
@@ -127,3 +128,7 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
     return sendInternalServerErr(res, errToStr(err));
   }
 };
+
+const server = micro(handler);
+log.info('starting server', { port: config.port });
+server.listen(config.port);

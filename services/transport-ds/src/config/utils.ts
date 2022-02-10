@@ -16,11 +16,11 @@ if (!isPackageContent(pckg)) {
 
 const { name, version } = pckg;
 
-export type ConfigEnv = 'development' | 'production';
+export type ConfigEnv = 'dev' | 'prd';
 
-export type LogLevel = 'none' | 'err' | 'warn' | 'info' | 'debug' | 'trace';
+export type LogLevel = 'err' | 'warn' | 'info' | 'debug';
 
-const isConfigEnv = (val: unknown): val is ConfigEnv => isStr(val) && ['development', 'production'].includes(val);
+const isConfigEnv = (val: unknown): val is ConfigEnv => isStr(val) && ['dev', 'prd'].includes(val);
 
 export const getAppEnv = (): ConfigEnv => {
   const val = process.env.NODE_ENV;
@@ -30,7 +30,7 @@ export const getAppEnv = (): ConfigEnv => {
       return modStr;
     }
   }
-  return 'production';
+  return 'prd';
 };
 
 export const getAppName = () => parseStrParamOrExit(name, 'name');
@@ -95,8 +95,6 @@ export const parseNumParamOrExit = (val: unknown, name: string): number => {
 export const parseLogLevelParam = (val: unknown, def: LogLevel): LogLevel => {
   if (!val || !isStr(val)) return def;
   switch (val.toLocaleLowerCase()) {
-    case 'none':
-      return 'none';
     case 'err':
       return 'err';
     case 'error':
@@ -109,8 +107,6 @@ export const parseLogLevelParam = (val: unknown, def: LogLevel): LogLevel => {
       return 'info';
     case 'debug':
       return 'debug';
-    case 'trace':
-      return 'trace';
     default:
       return 'err';
   }

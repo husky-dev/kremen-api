@@ -1,5 +1,5 @@
 {
-  "name": "kremen-equipment-api",
+  "name": "kremen-equipment-ds",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",
@@ -10,8 +10,7 @@
     "dist": "esbuild src/index.ts --outfile=dist/index.js --bundle --sourcemap --minify --platform=node --target=node17.4",
     "lint": "yarn lint:types && yarn lint:eslint",
     "lint:types": "tsc --noEmit --skipLibCheck",
-    "lint:eslint": "eslint \"src/**\"",
-    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+    "lint:eslint": "eslint \"src/**\""
   },
   "dependencies": {
     "@sentry/node": "6.16.0",

@@ -1,9 +1,7 @@
 import { config } from '@config';
-import { Log, RedisClientType } from '@core';
-import { getApi, TransportBus } from '@core/api';
+import { getApi, Log, RedisClientType, TransportBus } from '@core';
 import { ApiError } from '@core/api/utils';
-import { errToStr, hourSec, minMs, secMs } from '@utils';
-import { compact } from 'lodash';
+import { compact, errToStr, hourSec, minMs, secMs } from '@utils';
 import { Db } from 'mongodb';
 import WebSocket from 'ws';
 

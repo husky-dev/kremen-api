@@ -10,7 +10,7 @@ import {
   TransportBusesLocations,
   TransportPrediction,
   TransportRoute,
-} from './types';
+} from '@core/types';
 import { ApiError, ApiReqOpt, isApiErrorResp, isStaus200 } from './utils';
 
 const log = Log('core.api');
@@ -35,6 +35,7 @@ export const getApi = ({ apiRoot }: ApiOpt) => {
         throw new Error(`${status}: ${statusText}`);
       }
     }
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return data as unknown as T;
   };
 
@@ -54,5 +55,4 @@ export const getApi = ({ apiRoot }: ApiOpt) => {
   };
 };
 
-export * from './types';
 export * from './utils';

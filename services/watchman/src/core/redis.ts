@@ -17,5 +17,6 @@ export const initRedisClient = async (): Promise<RedisClientType> => {
   await client.connect();
   log.info(`connecting to redis done`);
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return client as RedisClientType;
 };

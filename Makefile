@@ -21,3 +21,4 @@ sync:
 	rsync -aP ./common/ ./services/transport-ds
 	rsync -aP ./common/ ./services/cinemas-ds
 	rsync -aP ./common/ ./services/cinemas-api
+	rsync -aP ./common/ ./services/watchman

@@ -1,4 +1,4 @@
-import { EquipmentMachine } from '@core/api';
+import { EquipmentMachine } from '@core';
 import { getObjectsDiff } from '@utils';
 
 export const getEquipmentMachineDiff = (prev: EquipmentMachine[], next: EquipmentMachine[]): Partial<EquipmentMachine>[] => {

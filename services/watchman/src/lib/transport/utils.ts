@@ -1,4 +1,4 @@
-import { TransportBus } from '@core/api';
+import { TransportBus } from '@core';
 import { getObjectsDiff } from '@utils';
 
 export const getBusesDiff = (prev: TransportBus[], next: TransportBus[]): Partial<TransportBus>[] => {

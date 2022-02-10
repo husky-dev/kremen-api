@@ -1,8 +1,6 @@
 import { config } from '@config';
-import { Log, RedisClientType } from '@core';
-import { ApiError, EquipmentMachine, getApi } from '@core/api';
-import { errToStr } from '@utils';
-import { compact } from 'lodash';
+import { ApiError, EquipmentMachine, getApi, Log, RedisClientType } from '@core';
+import { compact, errToStr } from '@utils';
 import { Db } from 'mongodb';
 import WebSocket from 'ws';
 
@@ -98,7 +96,7 @@ export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
       prevItems = newItems;
 
       log.debug('processing items done');
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof ApiError && err.code === 'DATASOURCE_ERROR') {
         return log.debug('datasource unavailable, skip');
       }

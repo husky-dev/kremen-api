@@ -2,26 +2,22 @@
 import { config, LogLevel } from '@config';
 import { select } from '@utils';
 
-import { captureSentryMsg } from './sentry';
+import { captureSentryMsg, Severity } from './sentry';
 
 const logLevelToNum = (val: LogLevel): number =>
   select(val, {
-    none: -1,
     err: 0,
     warn: 1,
     info: 2,
     debug: 3,
-    trace: 4,
   });
 
 const logLevelToSymbol = (val: LogLevel): string =>
   select(val, {
-    none: '',
     err: 'x',
     warn: '!',
     info: '+',
     debug: '-',
-    trace: '*',
   });
 
 export const Log = (m?: string) => {
@@ -52,16 +48,15 @@ export const Log = (m?: string) => {
 
   return {
     err: (msg: string, meta?: unknown) => {
-      captureSentryMsg(msg, 'error', meta);
+      captureSentryMsg(msg, Severity.Error, meta);
       logWithOpt({ msg, meta, level: 'err' });
     },
     warn: (msg: string, meta?: unknown) => {
-      captureSentryMsg(msg, 'warning', meta);
+      captureSentryMsg(msg, Severity.Warning, meta);
       logWithOpt({ msg, meta, level: 'warn' });
     },
     info: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'info' }),
     debug: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'debug' }),
-    trace: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'trace' }),
     errAndExit: (msg: string, meta?: unknown) => {
       logWithOpt({ msg, meta, level: 'err' });
       process.exit(1);

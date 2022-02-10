@@ -16,6 +16,7 @@
     "@sentry/node": "6.16.0",
     "@sentry/tracing": "6.16.0",
     "axios": "0.24.0",
+    "joi": "17.6.0",
     "lodash": "4.17.21",
     "micro": "9.3.4",
     "randomcolor": "0.6.2"

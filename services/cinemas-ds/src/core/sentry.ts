@@ -1,8 +1,6 @@
 import { config } from '@config';
 import * as Sentry from '@sentry/node';
-import { CaptureContext } from '@sentry/types';
-
-type SentryMsgLevel = 'warning' | 'error' | 'info';
+import { Severity } from '@sentry/node';
 
 export const initSentry = () =>
   Sentry.init({
@@ -13,8 +11,9 @@ export const initSentry = () =>
     integrations: [new Sentry.Integrations.Http({ tracing: true })],
   });
 
-export const captureSentryMsg = (msg: string, level: SentryMsgLevel, meta: unknown) => {
+export const captureSentryMsg = (msg: string, level: Severity, meta: unknown) => {
   const metaStr = meta ? `, ${JSON.stringify(meta)}` : '';
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  Sentry.captureMessage(`${msg}${metaStr}`, level as CaptureContext);
+  Sentry.captureMessage(`${msg}${metaStr}`, level);
 };
+
+export { Severity } from '@sentry/node';

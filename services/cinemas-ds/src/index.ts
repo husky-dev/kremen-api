@@ -4,6 +4,7 @@ import { DatasourceError, getFilmaxCinema, getGalaxyCinema, KremenCinema } from 
 import * as Sentry from '@sentry/node';
 import { errToStr, sendDatasourceErr, sendInternalServerErr, sendNotFoundErr, sendOk } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
+import micro from 'micro';
 import url from 'url';
 
 initSentry();
@@ -14,7 +15,7 @@ const handleGet = async (res: ServerResponse) => {
   return sendOk(res, cinemas);
 };
 
-export default async (req: IncomingMessage, res: ServerResponse) => {
+const handler = async (req: IncomingMessage, res: ServerResponse) => {
   const { method } = req;
   const { pathname = '' } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
@@ -39,3 +40,7 @@ export default async (req: IncomingMessage, res: ServerResponse) => {
     return sendInternalServerErr(res, errToStr(err));
   }
 };
+
+const server = micro(handler);
+log.info('starting server', { port: config.port });
+server.listen(config.port);

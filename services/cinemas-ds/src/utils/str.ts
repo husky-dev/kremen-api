@@ -1,7 +1,4 @@
-import { ValidationError, ValidationErrorItem } from 'joi';
-import { isError, isFunction, isNumber, isString } from 'lodash';
-
-import { isUnknownDict } from './types';
+import { isErr, isFunc, isNum, isStr, isUnknownDict } from './types';
 
 /**
  * Convert unknown error to string
@@ -11,36 +8,25 @@ export const errToStr = (err: unknown): string | undefined => {
   if (!err) {
     return undefined;
   }
-  if (isError(err)) {
+  if (isErr(err)) {
     return err.message;
   }
-  if (isString(err)) {
+  if (isStr(err)) {
     return err;
   }
-  if (isNumber(err)) {
+  if (isNum(err)) {
     return `${err}`;
   }
-  if (isUnknownDict(err) && isString(err.message)) {
+  if (isUnknownDict(err) && isStr(err.message)) {
     return err.message;
   }
   // Rule disabled cos this is an edge case
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  if (isUnknownDict(err) && isFunction(err.toString)) {
+  if (isUnknownDict(err) && isFunc(err.toString)) {
     // Rule disabled cos this is an edge case
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
     return err.toString();
   }
   /* istanbul ignore next */
   return undefined;
-};
-
-export const joiErrToStr = (val: ValidationError): string => {
-  const msgs = val.details.map(joiErrDetailItemToStr);
-  return msgs.join('; ');
-};
-
-const joiErrDetailItemToStr = (val: ValidationErrorItem): string => {
-  const { message, path, context } = val;
-  const pathStr = path.map(itm => `${itm}`).join('.');
-  return `${message} (path=${pathStr}, context=${JSON.stringify(context)})`;
 };

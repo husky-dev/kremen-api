@@ -16,8 +16,8 @@ import {
   strToLatLng,
 } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
-import url from 'url';
 import micro from 'micro';
+import url from 'url';
 
 initSentry();
 log.info('config', config);

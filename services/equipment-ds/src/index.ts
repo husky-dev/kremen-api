@@ -1,5 +1,5 @@
 import { config } from '@config';
-import { initMongoClient, log } from '@core';
+import { initMongoClient, initSentry, log } from '@core';
 import { api, DatasourceError } from '@lib';
 import * as Sentry from '@sentry/node';
 import {
@@ -16,18 +16,11 @@ import {
 } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
 import micro from 'micro';
-import url from 'url';
 import { Db } from 'mongodb';
+import url from 'url';
 
+initSentry();
 log.info('config', config);
-
-Sentry.init({
-  dsn: config.sentry.dsn,
-  tracesSampleRate: 1.0,
-  environment: config.env,
-  release: `${config.name}@${config.version}`,
-  integrations: [new Sentry.Integrations.Http({ tracing: true })],
-});
 
 const handleList = async (res: ServerResponse) => {
   const data = await api.getEquipmentList();

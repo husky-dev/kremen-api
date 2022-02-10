@@ -86,6 +86,7 @@ services:
       - LOG_LEVEL=info
       - BOT_TOKEN=$CINEMAS_BOT_TOKEN
       - BOT_WEBHOOK=$CINEMAS_BOT_WEBHOOK
+      - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
     restart: always
 
   cinemas-ds:

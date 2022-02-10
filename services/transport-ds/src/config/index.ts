@@ -1,37 +1,15 @@
-import {
-  ConfigEnv,
-  getAppEnv,
-  getAppName,
-  getAppVersion,
-  LogLevel,
-  parseLogLevelParam,
-  parseNumParam,
-  parseStrParamOrExit,
-} from './utils';
+import { getAppEnv, getAppName, getAppVersion, getLogLevelEnv, getNumEnv, getStrEnvOrExit } from './utils';
 
-interface Config {
-  env: ConfigEnv;
-  name: string;
-  version: string;
-  port: number;
-  log: {
-    level: LogLevel;
-  };
-  sentry: {
-    dsn: string;
-  };
-}
-
-export const config: Config = {
+export const config = {
   env: getAppEnv(),
-  name: getAppName(),
+  name: getAppName('kremen-transport-ds'),
   version: getAppVersion(),
-  port: parseNumParam(process.env.PORT, 8080),
+  port: getNumEnv('PORT', 8080),
   log: {
-    level: parseLogLevelParam(process.env.LOG_LEVEL, 'info'),
+    level: getLogLevelEnv('LOG_LEVEL', 'info'),
   },
   sentry: {
-    dsn: parseStrParamOrExit(process.env.SENTRY_DSN, 'SENTRY_DSN'),
+    dsn: getStrEnvOrExit('SENTRY_DSN'),
   },
 };
 

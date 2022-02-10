@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "lib": ["ES2020"],
+    "module": "commonjs",
+    "target": "ES2020",
+
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "declaration": true,
+    "strict": true,
+    "strictNullChecks": true,
+    
+    "baseUrl": ".",
+    "outDir": "dist",
+    "paths": {
+      "@config": ["./src/config"],
+      "@config/*": ["./src/config/*"],
+      "@core": ["./src/core"],
+      "@core/*": ["./src/core/*"],
+      "@lib": ["./src/lib"],
+      "@lib/*": ["./src/lib/*"],
+      "@utils": ["./src/utils"],
+      "@utils/*": ["./src/utils/*"]
+    }
+  },
+  "include": ["./src", "package.json"],
+  "exclude": [
+    "./node_modules/**/*"
+  ]
+}

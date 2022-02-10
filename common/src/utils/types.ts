@@ -34,3 +34,11 @@ export const compact = <D>(arr: (D | null | undefined)[]): D[] => {
   }
   return newArr;
 };
+
+export const unique = <D>(arr: D[]): D[] => {
+  const items: D[] = [];
+  for (const itm of arr) {
+    if (!items.includes(itm)) items.push(itm);
+  }
+  return items;
+};

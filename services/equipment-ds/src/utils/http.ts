@@ -17,7 +17,7 @@ export const parseQueryIdsParam = (val: string): number[] =>
 
 // Responses
 
-export const sendOk = <D = unknown>(res: ServerResponse, data: D) => sendWithHeaders(res, 200, data);
+export const sendOk = <D = unknown>(res: ServerResponse, data?: D) => sendWithHeaders(res, 200, data);
 
 export const sendErr = (res: ServerResponse, status: number, code: string, message?: string) =>
   sendWithHeaders(res, status, { code, message });

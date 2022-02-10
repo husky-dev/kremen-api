@@ -20,9 +20,13 @@ export const errToStr = (err: unknown): string | undefined => {
   if (isUnknownDict(err) && isStr(err.message)) {
     return err.message;
   }
+  // Rule disabled cos this is an edge case
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   if (isUnknownDict(err) && isFunc(err.toString)) {
+    // Rule disabled cos this is an edge case
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
     return err.toString();
   }
+  /* istanbul ignore next */
   return undefined;
 };

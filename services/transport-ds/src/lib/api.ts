@@ -1,10 +1,5 @@
-import { Log } from '@core';
-import { parseDataSourceRoutes } from '@lib';
-import { errToStr, HttpQs, LatLng, wait } from '@utils';
-import axios from 'axios';
-import { flatten } from 'lodash';
-
 import {
+  Log,
   TransportBus,
   TransportCity,
   TransportCountry,
@@ -14,7 +9,12 @@ import {
   TransportDataSourceStation,
   TransportRoute,
   TransportStation,
-} from './types';
+} from '@core';
+import { parseDataSourceRoutes } from '@lib';
+import { errToStr, HttpQs, LatLng, wait } from '@utils';
+import axios from 'axios';
+import { flatten } from 'lodash';
+
 import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceStation } from './utils';
 
 const log = Log('lib');
@@ -140,5 +140,4 @@ export const getApi = () => {
   return { getCountries, getCitites, withCity };
 };
 
-export * from './types';
 export * from './utils';

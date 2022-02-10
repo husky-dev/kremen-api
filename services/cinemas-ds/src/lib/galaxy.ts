@@ -1,22 +1,14 @@
 import { Log } from '@core';
 import { errToStr, compact, isStr } from '@utils';
-import {
-  KremenCinema,
-  KremenCinemaMovie,
-  KremenCinemaMovieFormat,
-  KremenCinemaMovieType,
-  KremenCinemaPrices,
-  KremenCinemaProposal,
-  KremenCinemaSession,
-} from './types';
+import { Cinema, CinemaMovie, CinemaMovieFormat, CinemaMovieType, CinemaPrices, CinemaProposal, CinemaSession } from '@core';
 import * as cheerio from 'cheerio';
 import { getPageContent, parseCommaSepStr, parseStr, parseTrailerUrl, simplifyMovieTitle } from './utils';
 import { CheerioAPI, Element } from 'cheerio';
 
 const log = Log('lib.galaxy');
 
-export const getCinema = async (): Promise<KremenCinema> => {
-  const data: Omit<KremenCinema, 'movies'> = {
+export const getCinema = async (): Promise<Cinema> => {
+  const data: Omit<Cinema, 'movies'> = {
     id: 'galaxy',
     title: 'Галактика Кіно',
     logo: 'http://www.galaktika-kino.com.ua/images/logotype.png',
@@ -41,7 +33,7 @@ export const getCinema = async (): Promise<KremenCinema> => {
   }
 };
 
-const getMovies = async (): Promise<KremenCinemaMovie[]> => {
+const getMovies = async (): Promise<CinemaMovie[]> => {
   const going = await getMoviesDataFromUrl('http://www.galaktika-kino.com.ua/razdel/uje-na-ekranah.php', 'going');
   const coming = await getMoviesDataFromUrl('http://www.galaktika-kino.com.ua/razdel/blijayshie-premeri.php', 'coming');
   const rawProposals = await parseProposalsPage('http://www.galaktika-kino.com.ua/main/price.php');
@@ -56,7 +48,7 @@ const getMovies = async (): Promise<KremenCinemaMovie[]> => {
   return movies;
 };
 
-const getMoviesDataFromUrl = async (url: string, type: KremenCinemaMovieType): Promise<KremenCinemaMovie[]> => {
+const getMoviesDataFromUrl = async (url: string, type: CinemaMovieType): Promise<CinemaMovie[]> => {
   const urls = await getMovieUrlsFromPage(url);
   const data = await Promise.all(urls.map(itm => getMovieDataFromPage(itm, type)));
   return data;
@@ -72,7 +64,7 @@ const getMovieUrlsFromPage = async (url: string) => {
   return compact(modUrls);
 };
 
-const getMovieDataFromPage = async (url: string, type: KremenCinemaMovieType): Promise<KremenCinemaMovie> => {
+const getMovieDataFromPage = async (url: string, type: CinemaMovieType): Promise<CinemaMovie> => {
   const html = await getPageContent<string>({ url });
   const $ = cheerio.load(html);
   const id = parseMovieIdFromUrl(url);
@@ -92,10 +84,10 @@ const parseMovieIdFromUrl = (url: string) => {
   return rawId.replace('.php', '').trim().toLowerCase();
 };
 
-const getMovieInfo = ($: CheerioAPI): Partial<KremenCinemaMovie> => {
+const getMovieInfo = ($: CheerioAPI): Partial<CinemaMovie> => {
   const rows = $('.parametrs .table .tr').toArray();
   const arr = rows.map(itm => ({ name: $('.td:nth-child(1)', itm).text(), value: $('.td:nth-child(2)', itm).text() }));
-  const obj: Partial<KremenCinemaMovie> = {};
+  const obj: Partial<CinemaMovie> = {};
   const custom: Record<string, string> = {};
   for (const itm of arr) {
     const { name, value } = itm;
@@ -120,7 +112,7 @@ interface Proposal {
   hallId: number;
   hallScheme?: string;
   description?: string;
-  sessions: (KremenCinemaSession & { title: string })[];
+  sessions: (CinemaSession & { title: string })[];
 }
 
 const parseProposalsPage = async (url: string) => {
@@ -163,11 +155,11 @@ const parseHallId = (val: string): number => {
   return match ? parseInt(match[0], 10) : 0;
 };
 
-const parseTitle = (val: string): { title: string; format: KremenCinemaMovieFormat } => {
+const parseTitle = (val: string): { title: string; format: CinemaMovieFormat } => {
   const mUsual = /("|«)([\s\S]+?)("|»)\s*?(\d)D/g.exec(val);
   if (mUsual) {
     const title = mUsual[2];
-    const format: KremenCinemaMovieFormat = mUsual[4] === '3' ? '3D' : '2D';
+    const format: CinemaMovieFormat = mUsual[4] === '3' ? '3D' : '2D';
     return { title, format };
   }
   const mTitle = /("|«)([\s\S]+?)("|»)/g.exec(val);
@@ -178,7 +170,7 @@ const parseTitle = (val: string): { title: string; format: KremenCinemaMovieForm
   return { title: val, format: '2D' };
 };
 
-const parsePrices = (val: string): KremenCinemaPrices => {
+const parsePrices = (val: string): CinemaPrices => {
   const mTwo = /(\d+)\s+?(\d+)/.exec(val);
   if (mTwo) return { usual: parseInt(mTwo[1], 10), vip: parseInt(mTwo[2], 10) };
   const mSingle = /(\d+)/.exec(val);
@@ -187,14 +179,14 @@ const parsePrices = (val: string): KremenCinemaPrices => {
   return {};
 };
 
-const getProposalsForMovie = (movie: KremenCinemaMovie, proposals: Proposal[]): KremenCinemaProposal[] => {
+const getProposalsForMovie = (movie: CinemaMovie, proposals: Proposal[]): CinemaProposal[] => {
   const title = simplifyMovieTitle(movie.title);
-  const items: KremenCinemaProposal[] = [];
+  const items: CinemaProposal[] = [];
   for (const proposal of proposals) {
     const propSessions = proposal.sessions.filter(session => simplifyMovieTitle(session.title) === title);
     if (!propSessions.length) continue;
     const { hallId, hallScheme, description } = proposal;
-    const sessions: KremenCinemaSession[] = propSessions.map(({ title, ...data }) => data);
+    const sessions: CinemaSession[] = propSessions.map(({ title, ...data }) => data);
     const id = `${sessions[0].date}-hall-${hallId}-${movie.id}`;
     items.push({ id, hallId, hallScheme, description, sessions });
   }

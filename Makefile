@@ -17,6 +17,9 @@ push:
 	docker push ghcr.io/husky-dev/kremen-api/backup:latest
 
 sync:
-	rsync -aP ./common/ ./services/equipment-ds/src
-	rsync -aP ./common/ ./services/transport-ds/src
-	rsync -aP ./common/ ./services/cinemas-ds/src
+	rsync -aP ./common/src/ ./services/equipment-ds/src
+	rsync -aP ./common/Dockerfile ./services/equipment-ds/Dockerfile
+	rsync -aP ./common/src/ ./services/transport-ds/src
+	rsync -aP ./common/Dockerfile ./services/transport-ds/Dockerfile
+	rsync -aP ./common/src/ ./services/cinemas-ds/src
+	rsync -aP ./common/Dockerfile ./services/cinemas-ds/Dockerfile

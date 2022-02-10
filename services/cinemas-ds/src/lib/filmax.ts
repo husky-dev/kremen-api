@@ -3,15 +3,7 @@ import { compact, errToStr, isStr, isUnknownDict, joiErrToStr } from '@utils';
 import * as cheerio from 'cheerio';
 import { CheerioAPI, Element } from 'cheerio';
 import Joi from 'joi';
-import {
-  KremenCinema,
-  KremenCinemaMovie,
-  KremenCinemaMovieFormat,
-  KremenCinemaMovieType,
-  KremenCinemaPrices,
-  KremenCinemaProposal,
-  KremenCinemaSession,
-} from './types';
+import { Cinema, CinemaMovie, CinemaMovieFormat, CinemaMovieType, CinemaPrices, CinemaProposal, CinemaSession } from '@core';
 import { getPageContent, parseCommaSepStr, parseStr, parseTrailerUrl } from './utils';
 
 const log = Log('lib.filmax');
@@ -19,8 +11,8 @@ const log = Log('lib.filmax');
 const cookies =
   'locChose=435ddc275a03c43b535e95843b6ab32f7e1a0c570483826f8ed5167dc61c7889a%3A2%3A%7Bi%3A0%3Bs%3A8%3A%22locChose%22%3Bi%3A1%3Bi%3A1%3B%7D; region=dd65784c8dc0ca20d697e25fede51dba12a93d7853035642cf74fd5345211d48a%3A2%3A%7Bi%3A0%3Bs%3A6%3A%22region%22%3Bi%3A1%3Bs%3A1%3A%227%22%3B%7D';
 
-export const getCinema = async (): Promise<KremenCinema> => {
-  const data: Omit<KremenCinema, 'movies'> = {
+export const getCinema = async (): Promise<Cinema> => {
+  const data: Omit<Cinema, 'movies'> = {
     id: 'filmax',
     title: 'Filmax',
     logo: 'https://filmax.ua/movies/img/filmax-logo.png',
@@ -49,14 +41,14 @@ const getMovies = async () => {
   const $ = cheerio.load(html);
   const sections = $('.page__content section.cards').toArray();
   const arrs = await Promise.all(sections.map(itm => parseHomePageSection($, itm)));
-  const data: KremenCinemaMovie[] = [];
+  const data: CinemaMovie[] = [];
   for (const arr of arrs) {
     data.push(...arr);
   }
   return data;
 };
 
-const parseHomePageSection = async ($: CheerioAPI, el: Element): Promise<KremenCinemaMovie[]> => {
+const parseHomePageSection = async ($: CheerioAPI, el: Element): Promise<CinemaMovie[]> => {
   const title = $('h2', el).text();
   const type = parseHomePageSessionTitle(title) || 'coming';
   const cards = $('article.preview-card', el).toArray();
@@ -64,12 +56,12 @@ const parseHomePageSection = async ($: CheerioAPI, el: Element): Promise<KremenC
   return movies.map(itm => ({ ...itm, type }));
 };
 
-const parseHomePageMovie = async ($: CheerioAPI, el: Element, type: KremenCinemaMovieType): Promise<KremenCinemaMovie> => {
+const parseHomePageMovie = async ($: CheerioAPI, el: Element, type: CinemaMovieType): Promise<CinemaMovie> => {
   const title = $('h3 a', el).text();
   const url = parseUrl($('h3 a', el).attr('href')) || '';
   const id = urlToMovideId(url);
   const poster = parseUrl($('picture img', el).attr('src'));
-  let proposals: KremenCinemaProposal[] = [];
+  let proposals: CinemaProposal[] = [];
   try {
     if (id) {
       const schedule = await getSchedule(id);
@@ -78,7 +70,7 @@ const parseHomePageMovie = async ($: CheerioAPI, el: Element, type: KremenCinema
   } catch (err: unknown) {
     log.err('getting movie schedule err', { id, title, url, msg: errToStr(err) });
   }
-  let info: Partial<KremenCinemaMovie> = {};
+  let info: Partial<CinemaMovie> = {};
   try {
     if (url) {
       info = await getMovideInfo(url);
@@ -89,7 +81,7 @@ const parseHomePageMovie = async ($: CheerioAPI, el: Element, type: KremenCinema
   return { id: `${id}`, type, title, url, poster, ...info, proposals };
 };
 
-const parseHomePageSessionTitle = (val: string): KremenCinemaMovieType | undefined => {
+const parseHomePageSessionTitle = (val: string): CinemaMovieType | undefined => {
   if (val.toLowerCase().indexOf('зараз') >= 0) return 'going';
   if (val.toLowerCase().indexOf('скоро') >= 0) return 'coming';
   return undefined;
@@ -107,13 +99,13 @@ const urlToMovideId = (val?: string): number | undefined => {
   return match ? parseInt(match[1], 10) : undefined;
 };
 
-const parseSession = (val: DSGetScheduleSessions): KremenCinemaProposal => {
+const parseSession = (val: DSGetScheduleSessions): CinemaProposal => {
   const { id, cinema_hall_id: hallId, price, price_stock, format_id, vip, date_data } = val;
-  const prices: KremenCinemaPrices = { stock: parsePrice(price_stock) };
+  const prices: CinemaPrices = { stock: parsePrice(price_stock) };
   if (vip === 1) prices.vip = parsePrice(price);
   else prices.usual = parsePrice(price);
-  const format: KremenCinemaMovieFormat = format_id === 0 ? '2D' : '3D';
-  const sessions: (KremenCinemaSession | undefined)[] = date_data.map(itm => {
+  const format: CinemaMovieFormat = format_id === 0 ? '2D' : '3D';
+  const sessions: (CinemaSession | undefined)[] = date_data.map(itm => {
     const date = parseDateDataItem(itm);
     return date ? { ...date, prices, format } : undefined;
   });
@@ -191,7 +183,7 @@ export const isDSGetScheduleErr = (val: unknown): val is DSGetScheduleErr =>
 
 // Movie
 
-const getMovideInfo = async (url: string): Promise<Partial<KremenCinemaMovie>> => {
+const getMovideInfo = async (url: string): Promise<Partial<CinemaMovie>> => {
   const html = await getPageContent<string>({ url, cookies });
   const $ = cheerio.load(html);
   const title = $('.film__main-title').first().text();
@@ -202,15 +194,15 @@ const getMovideInfo = async (url: string): Promise<Partial<KremenCinemaMovie>> =
   return { title, description, poster, trailer, ...info };
 };
 
-const parseMovieInfoSection = ($: CheerioAPI, el: cheerio.Cheerio<Element>): Partial<KremenCinemaMovie> => {
+const parseMovieInfoSection = ($: CheerioAPI, el: cheerio.Cheerio<Element>): Partial<CinemaMovie> => {
   const items = $('.film__info-group', el).toArray();
   if (!items.length) return {};
   const arr = items.map(itm => ({ name: $('dt', itm).text(), value: $('dd', itm).text() }));
   return movieInfoFieldsToObj(arr);
 };
 
-const movieInfoFieldsToObj = (arr: { name: string; value: string }[]): Partial<KremenCinemaMovie> => {
-  const obj: Partial<KremenCinemaMovie> = {};
+const movieInfoFieldsToObj = (arr: { name: string; value: string }[]): Partial<CinemaMovie> => {
+  const obj: Partial<CinemaMovie> = {};
   const custom: Record<string, string> = {};
   for (const itm of arr) {
     const { name, value } = itm;

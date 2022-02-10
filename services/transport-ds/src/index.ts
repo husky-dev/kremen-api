@@ -1,6 +1,6 @@
 import { config } from '@config';
-import { initSentry, log } from '@core';
-import { busesToLocations, DatasourceError, getApi, TransportCity } from '@lib';
+import { initSentry, log, TransportCity } from '@core';
+import { busesToLocations, DatasourceError, getApi } from '@lib';
 import * as Sentry from '@sentry/node';
 import {
   errToStr,

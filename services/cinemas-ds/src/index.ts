@@ -1,6 +1,6 @@
 import { config } from '@config';
-import { initSentry, log } from '@core';
-import { DatasourceError, getFilmaxCinema, getGalaxyCinema, KremenCinema } from '@lib';
+import { Cinema, initSentry, log } from '@core';
+import { DatasourceError, getFilmaxCinema, getGalaxyCinema } from '@lib';
 import * as Sentry from '@sentry/node';
 import { errToStr, sendDatasourceErr, sendInternalServerErr, sendNotFoundErr, sendOk } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
@@ -11,7 +11,7 @@ initSentry();
 log.info('config', config);
 
 const handleGet = async (res: ServerResponse) => {
-  const cinemas: KremenCinema[] = await Promise.all([getGalaxyCinema(), getFilmaxCinema()]);
+  const cinemas: Cinema[] = await Promise.all([getGalaxyCinema(), getFilmaxCinema()]);
   return sendOk(res, cinemas);
 };
 

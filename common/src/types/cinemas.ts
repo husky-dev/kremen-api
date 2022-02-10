@@ -1,27 +1,27 @@
-export interface KremenCinema {
+export interface Cinema {
   id: string;
   title: string;
   logo?: string;
   address: string;
   website: string;
-  location: KremenCinemaLocation;
-  contacts: KremenCinemaContact[];
-  movies: KremenCinemaMovie[];
+  location: CinemaLocation;
+  contacts: CinemaContact[];
+  movies: CinemaMovie[];
 }
 
-export interface KremenCinemaLocation {
+export interface CinemaLocation {
   lat: number;
   lng: number;
 }
 
-export interface KremenCinemaContact {
+export interface CinemaContact {
   type: 'phone' | 'fb' | 'instagram';
   value: string;
 }
 
-export interface KremenCinemaMovie {
+export interface CinemaMovie {
   id: string;
-  type: KremenCinemaMovieType;
+  type: CinemaMovieType;
   title: string;
   url: string;
   description?: string;
@@ -40,30 +40,30 @@ export interface KremenCinemaMovie {
   start?: string;
   studio?: string;
   custom?: Record<string, string>;
-  proposals: KremenCinemaProposal[];
+  proposals: CinemaProposal[];
 }
 
-export type KremenCinemaMovieType = 'going' | 'coming';
+export type CinemaMovieType = 'going' | 'coming';
 
-export interface KremenCinemaProposal {
+export interface CinemaProposal {
   id: string;
   hallId: number;
   hallScheme?: string;
   description?: string;
-  sessions: KremenCinemaSession[];
+  sessions: CinemaSession[];
 }
 
-export interface KremenCinemaSession {
+export interface CinemaSession {
   date: string;
   time: string;
-  format: KremenCinemaMovieFormat;
-  prices: KremenCinemaPrices;
+  format: CinemaMovieFormat;
+  prices: CinemaPrices;
   features?: string[];
 }
 
-export type KremenCinemaMovieFormat = '2D' | '3D';
+export type CinemaMovieFormat = '2D' | '3D';
 
-export interface KremenCinemaPrices {
+export interface CinemaPrices {
   usual?: number;
   vip?: number;
   stock?: number;

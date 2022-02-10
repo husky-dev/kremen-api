@@ -1,6 +1,3 @@
-import { compact } from 'lodash';
-
-import { routeNumberToColor } from './consts';
 import {
   TransportBus,
   TransportBusesLocations,
@@ -12,7 +9,10 @@ import {
   TransportRoute,
   TransportStation,
   TransportType,
-} from './types';
+} from '@core';
+import { compact } from 'lodash';
+
+import { routeNumberToColor } from './consts';
 
 // Data Source
 

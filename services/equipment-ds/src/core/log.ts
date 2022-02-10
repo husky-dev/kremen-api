@@ -1,27 +1,22 @@
 /* eslint-disable no-console */
 import { config, LogLevel } from '@config';
 import * as Sentry from '@sentry/node';
-import { CaptureContext } from '@sentry/types';
 import { select } from '@utils';
 
 const logLevelToNum = (val: LogLevel): number =>
   select(val, {
-    none: -1,
     err: 0,
     warn: 1,
     info: 2,
     debug: 3,
-    trace: 4,
   });
 
 const logLevelToSymbol = (val: LogLevel): string =>
   select(val, {
-    none: '',
     err: 'x',
     warn: '!',
     info: '+',
     debug: '-',
-    trace: '*',
   });
 
 export const Log = (m?: string) => {
@@ -56,13 +51,11 @@ export const Log = (m?: string) => {
     },
     warn: (msg: string, meta?: unknown) => {
       const metaStr = meta ? `, ${JSON.stringify(meta)}` : '';
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      Sentry.captureMessage(`${msg}${metaStr}`, 'warning' as CaptureContext);
+      Sentry.captureMessage(`${msg}${metaStr}`, Sentry.Severity.Warning);
       logWithOpt({ msg, meta, level: 'warn' });
     },
     info: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'info' }),
     debug: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'debug' }),
-    trace: (msg: string, meta?: unknown) => logWithOpt({ msg, meta, level: 'trace' }),
     errAndExit: (msg: string, meta?: unknown) => {
       logWithOpt({ msg, meta, level: 'err' });
       process.exit(1);

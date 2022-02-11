@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
-set -e
+set -ex
 
 mkdir -p /backup
 
-TS=$(date +%Y%m%d-%H%M%S)
 tar -zcf /backup/ssl-$(date +%Y%m%d-%H%M%S).tar.gz -C /var/data/ ssl

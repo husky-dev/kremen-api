@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -e
+set -ex
 
 mkdir -p /backup/mongo
 # Dump mongodb to /backup/mongo

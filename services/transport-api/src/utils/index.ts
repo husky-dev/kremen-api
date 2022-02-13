@@ -3,3 +3,4 @@ export * from './location';
 export * from './str';
 export * from './time';
 export * from './types';
+export * from './date';

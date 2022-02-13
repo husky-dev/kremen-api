@@ -3,6 +3,7 @@ import { initSentry, log, TransportCity } from '@core';
 import { busesToLocations, DatasourceError, getApi } from '@lib';
 import * as Sentry from '@sentry/node';
 import {
+  daySec,
   errToStr,
   HttpQs,
   isStr,
@@ -26,7 +27,7 @@ const api = getApi().withCity(TransportCity.Kremenchuk);
 
 const handleRoutes = async (res: ServerResponse) => {
   const data = await api.getRoutesWithStations();
-  return sendOk(res, data);
+  return sendOk(res, data, { cache: { type: 'public', sec: daySec } });
 };
 
 const handleBuses = async (res: ServerResponse, query: HttpQs) => {
@@ -80,7 +81,7 @@ const handleRouteBusses = async (res: ServerResponse, query: HttpQs, { rid }: { 
 
 const handleRouteStations = async (res: ServerResponse, query: HttpQs, { rid }: { rid: number }) => {
   const data = await api.getRouteStations(rid);
-  return sendOk(res, data);
+  return sendOk(res, data, { cache: { type: 'public', sec: daySec } });
 };
 
 const handler = async (req: IncomingMessage, res: ServerResponse) => {

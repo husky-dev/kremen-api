@@ -13,7 +13,8 @@
   },
   "lint-staged": {
     "{*.ts,*tsx}": [
-      "yarn format"
+      "yarn format",
+      "make lint"
     ]
   },
   "devDependencies": {

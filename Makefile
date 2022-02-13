@@ -22,3 +22,10 @@ sync:
 	rsync -aP ./common/ ./services/cinemas-ds
 	rsync -aP ./common/ ./services/cinemas-api
 	rsync -aP ./common/ ./services/watchman
+
+lint:
+	cd services/equipment-api && yarn lint:types
+	cd services/transport-api && yarn lint:types
+	cd services/cinemas-ds && yarn lint:types
+	cd services/cinemas-api && yarn lint:types
+	cd services/watchman && yarn lint:types

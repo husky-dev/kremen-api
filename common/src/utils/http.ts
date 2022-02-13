@@ -32,6 +32,9 @@ export const sendParamMissedErr = (res: ServerResponse, name: string) =>
 export const sendWrongFormatErr = (res: ServerResponse, name: string) =>
   sendErr(res, 422, 'WRONG_FORMAT', `Wrong "${name}" format`);
 
+export const sendUnprocessableEntityErr = (res: ServerResponse, message?: string) =>
+  sendErr(res, 422, 'UNPROCESSABLE_ENTITY', message || 'Unprocessable entity');
+
 export const sendInternalServerErr = (res: ServerResponse, message: string = 'Internal server error') =>
   sendErr(res, 500, 'INTERNAL_SERVER_ERROR', message);
 

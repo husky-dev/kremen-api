@@ -1,6 +1,6 @@
 import { Log } from '@core';
 import randomcolor from 'randomcolor';
-const log = Log('lib');
+const log = Log('lib.ds.consts');
 
 export const routeColors: Record<string, string> = {
   '1': '#6B7A89',

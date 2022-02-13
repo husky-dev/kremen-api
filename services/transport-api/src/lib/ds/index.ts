@@ -10,12 +10,11 @@ import {
   TransportRoute,
   TransportStation,
 } from '@core';
-import { parseDataSourceRoutes } from '@lib';
 import { errToStr, HttpQs, LatLng, wait } from '@utils';
 import axios from 'axios';
 import { flatten } from 'lodash';
 
-import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceStation } from './utils';
+import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceRoutes, parseDataSourceStation } from './utils';
 
 const log = Log('lib');
 

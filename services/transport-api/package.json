@@ -19,7 +19,9 @@
     "joi": "17.6.0",
     "lodash": "4.17.21",
     "micro": "9.3.4",
-    "randomcolor": "0.6.2"
+    "mongodb": "4.3.1",
+    "randomcolor": "0.6.2",
+    "redis": "4.0.3"
   },
   "devDependencies": {
     "@types/lodash": "4.14.177",

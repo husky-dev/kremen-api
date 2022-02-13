@@ -26,6 +26,9 @@ services:
     working_dir: '/usr/src/app'
     volumes:
       - './services/transport-api:/usr/src/app'
+    depends_on:
+      - mongo
+      - redis
     environment:
       - NODE_ENV=dev
       - LOG_LEVEL=debug

@@ -9,6 +9,7 @@ export const initSentry = () =>
     environment: config.env,
     release: `${config.name}@${config.version}`,
     integrations: [new Sentry.Integrations.Http({ tracing: true })],
+    beforeSend: event => (config.env === 'prd' ? event : null),
   });
 
 export const captureSentryMsg = (msg: string, level: Severity, meta: unknown) => {

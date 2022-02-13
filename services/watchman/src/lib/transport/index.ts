@@ -18,7 +18,7 @@ interface WatcherOpt {
 export const initTransprotWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
   // WSS
 
-  const api = getApi({ apiRoot: 'http://transport-ds:8080/' });
+  const api = getApi({ apiRoot: 'http://transport-api:8080/' });
 
   wss.on('connection', () => {
     log.debug('new connection');

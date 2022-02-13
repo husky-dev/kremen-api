@@ -2,7 +2,7 @@ import { getAppEnv, getAppName, getAppVersion, getLogLevelEnv, getNumEnv, getStr
 
 export const config = {
   env: getAppEnv(),
-  name: getAppName('kremen-equipment-ds'),
+  name: getAppName('kremen-equipment-api'),
   version: getAppVersion(),
   port: getNumEnv('PORT', 8080),
   log: {

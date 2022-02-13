@@ -15,7 +15,7 @@ interface WatcherOpt {
 }
 
 export const initEquipmentWatcher = ({ wss, mongo, redis }: WatcherOpt) => {
-  const api = getApi({ apiRoot: 'http://equipment-ds:8080/' });
+  const api = getApi({ apiRoot: 'http://equipment-api:8080/' });
   // WSS
 
   wss.on('connection', () => {

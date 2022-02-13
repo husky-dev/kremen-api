@@ -9,9 +9,9 @@ services:
     depends_on:
       - main-web
       - transport-web
-      - transport-ds
+      - transport-api
       - equipment-web
-      - equipment-ds
+      - equipment-api
       - cinemas-ds
       - cinemas-api
       - watchman
@@ -33,8 +33,8 @@ services:
     container_name: watchman
     hostname: watchman
     depends_on:
-      - transport-ds
-      - equipment-ds
+      - transport-api
+      - equipment-api
       - mongo
       - redis
     environment:
@@ -49,10 +49,10 @@ services:
     hostname: transport-web
     restart: always
 
-  transport-ds:
-    image: ghcr.io/husky-dev/kremen-api/transport-ds:latest
-    container_name: transport-ds
-    hostname: transport-ds
+  transport-api:
+    image: ghcr.io/husky-dev/kremen-api/transport-api:latest
+    container_name: transport-api
+    hostname: transport-api
     environment:
       - NODE_ENV=prd
       - LOG_LEVEL=info
@@ -65,10 +65,10 @@ services:
     hostname: equipment-web
     restart: always
 
-  equipment-ds:
-    image: ghcr.io/husky-dev/kremen-api/equipment-ds:latest
-    container_name: equipment-ds
-    hostname: equipment-ds
+  equipment-api:
+    image: ghcr.io/husky-dev/kremen-api/equipment-api:latest
+    container_name: equipment-api
+    hostname: equipment-api
     environment:
       - NODE_ENV=prd
       - LOG_LEVEL=info

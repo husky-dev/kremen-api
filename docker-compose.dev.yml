@@ -8,8 +8,8 @@ services:
     container_name: nginx
     hostname: nginx
     depends_on:
-      - transport-ds
-      - equipment-ds
+      - transport-api
+      - equipment-api
       - cinemas-ds
       - cinemas-bot
       - watchman
@@ -19,13 +19,13 @@ services:
     ports:
       - '80:80'
 
-  transport-ds:
+  transport-api:
     image: node:14-alpine3.10
-    container_name: transport-ds
-    hostname: transport-ds
+    container_name: transport-api
+    hostname: transport-api
     working_dir: '/usr/src/app'
     volumes:
-      - './services/transport-ds:/usr/src/app'
+      - './services/transport-api:/usr/src/app'
     environment:
       - NODE_ENV=dev
       - LOG_LEVEL=debug
@@ -34,13 +34,13 @@ services:
       - '8081:8080'
     command: 'yarn start:dev'
 
-  equipment-ds:
+  equipment-api:
     image: node:14-alpine3.10
-    container_name: equipment-ds
-    hostname: equipment-ds
+    container_name: equipment-api
+    hostname: equipment-api
     working_dir: '/usr/src/app'
     volumes:
-      - './services/equipment-ds:/usr/src/app'
+      - './services/equipment-api:/usr/src/app'
     environment:
       - NODE_ENV=dev
       - LOG_LEVEL=debug
@@ -90,8 +90,8 @@ services:
     volumes:
       - './services/watchman:/usr/src/app'
     depends_on:
-      - transport-ds
-      - equipment-ds
+      - transport-api
+      - equipment-api
       - mongo
       - redis
     environment:

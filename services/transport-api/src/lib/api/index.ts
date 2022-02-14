@@ -39,7 +39,7 @@ export const getApi = () => {
       const reqQs = qs ? { ...defQs, ...qs } : defQs;
       const url = `https://infobus.kz${path}`;
       log.debug('api req', { url, qs });
-      const { data } = await axios({ url, params: reqQs, timeout: 10 * secMs });
+      const { data } = await axios({ url, params: reqQs, timeout: 5 * secMs });
       return data;
     } catch (err: unknown) {
       if (retry >= maxRetryCount) throw new DatasourceError(`${errToStr(err)}`);

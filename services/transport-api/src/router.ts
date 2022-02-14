@@ -18,7 +18,7 @@ import {
 import { IncomingMessage, ServerResponse } from 'http';
 import url from 'url';
 
-import { busesToLocations, DatasourceError, getApi } from './ds';
+import { busesToLocations, DatasourceError, getApi } from '@lib';
 
 const api = getApi().withCity(TransportCity.Kremenchuk);
 

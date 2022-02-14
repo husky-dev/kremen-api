@@ -11,7 +11,7 @@ export const config = {
   sentry: {
     dsn: getStrEnvOrExit('SENTRY_DSN'),
   },
-  cahce: {
+  cache: {
     enabled: getBoolEnv('CACHE_ENABLED', true),
     key: getStrEnv('CACHE_KEY', 'kremen:cache:transport'),
   },

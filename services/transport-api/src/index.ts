@@ -1,10 +1,10 @@
 import { config } from '@config';
 import { initMongo, initRedis, initSentry, log, Timer } from '@core';
-import { errToStr, hourMs } from '@utils';
+import { errToStr, hourMs, secMs } from '@utils';
 import micro from 'micro';
 
 import { reqHandler } from './router';
-import { handleRoutesUpdate } from './updater';
+import { handleBusesUpdate, handleRoutesUpdate } from '@lib/updater';
 
 initSentry();
 log.info('config', config);
@@ -21,10 +21,14 @@ const start = async () => {
     const routesUpdater = new Timer(hourMs, handleRoutesUpdate(db, redis));
     routesUpdater.start();
 
+    const busesUpdater = new Timer(secMs * 5, handleBusesUpdate(db, redis));
+    busesUpdater.start();
+
     process.on('SIGTERM', async () => {
       try {
         log.info('SIGTERM signal received');
         routesUpdater.stop();
+        busesUpdater.stop();
         server.close();
         mongo.close();
         redis.disconnect();

@@ -10,13 +10,13 @@ import {
   TransportRoute,
   TransportStation,
 } from '@core';
-import { errToStr, HttpQs, LatLng, wait } from '@utils';
+import { errToStr, HttpQs, LatLng, secMs, wait } from '@utils';
 import axios from 'axios';
 import { flatten } from 'lodash';
 
 import { parseDataSourceBus, parseDataSourcePrediction, parseDataSourceRoutes, parseDataSourceStation } from './utils';
 
-const log = Log('lib');
+const log = Log('lib.api');
 
 export class DatasourceError extends Error {
   constructor(message: string) {
@@ -39,7 +39,7 @@ export const getApi = () => {
       const reqQs = qs ? { ...defQs, ...qs } : defQs;
       const url = `https://infobus.kz${path}`;
       log.debug('api req', { url, qs });
-      const { data } = await axios({ url, params: reqQs });
+      const { data } = await axios({ url, params: reqQs, timeout: 10 * secMs });
       return data;
     } catch (err: unknown) {
       if (retry >= maxRetryCount) throw new DatasourceError(`${errToStr(err)}`);

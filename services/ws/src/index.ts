@@ -22,7 +22,7 @@ const init = async () => {
       log.debug('new tranposrt buses update', { message });
       wssTransport.clients.forEach(ws => {
         if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify(`{"type":"buses","data":${message}}`));
+          ws.send(`{"type":"buses","data":${message}}`);
         }
       });
     });
@@ -33,9 +33,9 @@ const init = async () => {
     });
     redis.subscribe('kremen:equipment:updates:items', message => {
       log.debug('new equipment items update', { message });
-      wssTransport.clients.forEach(ws => {
+      wssEqipment.clients.forEach(ws => {
         if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify(`{"type":"items","data":${message}}`));
+          ws.send(`{"type":"items","data":${message}}`);
         }
       });
     });

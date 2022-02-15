@@ -18,13 +18,11 @@
     "axios": "0.24.0",
     "joi": "17.6.0",
     "micro": "9.3.4",
-    "mongodb": "4.2.1",
     "redis": "4.0.0",
     "ws": "7.3.1"
   },
   "devDependencies": {
     "@types/micro": "7.3.6",
-    "@types/mongodb": "4.0.7",
     "@types/node": "14.11.8",
     "@types/ws": "7.2.7",
     "@typescript-eslint/eslint-plugin": "5.6.0",

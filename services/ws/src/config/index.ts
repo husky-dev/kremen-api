@@ -11,17 +11,9 @@ export const config = {
   sentry: {
     dsn: getStrEnvOrExit('SENTRY_DSN'),
   },
-  mongodb: {
-    host: getStrEnv('MONGODB_HOST', 'mongo'),
-    port: getNumEnv('MONGODB_PORT', 27017),
-    name: getStrEnv('MONGODB_NAME', 'kremen'),
-  },
   redis: {
     host: getStrEnv('REDIS_HOST', 'redis'),
     port: getNumEnv('REDIS_PORT', 6379),
-  },
-  cache: {
-    nginxKey: getStrEnv('NGINX_CACHE_KEY', 'kremen:nginx:cache'),
   },
 };
 

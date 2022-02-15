@@ -10,8 +10,7 @@ import {
   TransportStation,
   TransportType,
 } from '@core';
-import { getObjectsDiff } from '@utils';
-import { compact } from 'lodash';
+import { compact, getObjectsDiff } from '@utils';
 
 import { routeNumberToColor } from './consts';
 

@@ -5,7 +5,7 @@ import * as cheerio from 'cheerio';
 import { getPageContent, parseCommaSepStr, parseStr, parseTrailerUrl, simplifyMovieTitle } from './utils';
 import { CheerioAPI, Element } from 'cheerio';
 
-const log = Log('lib.galaxy');
+const log = Log('lib.cinemas.galaxy');
 
 export const getCinema = async (): Promise<Cinema> => {
   const data: Omit<Cinema, 'movies'> = {

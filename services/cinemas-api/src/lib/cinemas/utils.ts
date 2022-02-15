@@ -3,7 +3,7 @@ import { isStr, wait } from '@utils';
 import axios, { AxiosRequestHeaders, AxiosRequestConfig } from 'axios';
 import iconv from 'iconv-lite';
 
-const log = Log('lib.utils');
+const log = Log('lib.cinemas.utils');
 
 // Getting data
 

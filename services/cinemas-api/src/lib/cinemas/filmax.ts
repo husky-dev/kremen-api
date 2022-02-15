@@ -6,7 +6,7 @@ import Joi from 'joi';
 import { Cinema, CinemaMovie, CinemaMovieFormat, CinemaMovieType, CinemaPrices, CinemaProposal, CinemaSession } from '@core';
 import { getPageContent, parseCommaSepStr, parseStr, parseTrailerUrl } from './utils';
 
-const log = Log('lib.filmax');
+const log = Log('lib.cinemas.filmax');
 
 const cookies =
   'locChose=435ddc275a03c43b535e95843b6ab32f7e1a0c570483826f8ed5167dc61c7889a%3A2%3A%7Bi%3A0%3Bs%3A8%3A%22locChose%22%3Bi%3A1%3Bi%3A1%3B%7D; region=dd65784c8dc0ca20d697e25fede51dba12a93d7853035642cf74fd5345211d48a%3A2%3A%7Bi%3A0%3Bs%3A6%3A%22region%22%3Bi%3A1%3Bs%3A1%3A%227%22%3B%7D';

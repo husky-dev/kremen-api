@@ -1,6 +1,5 @@
 import { config } from '@config';
-import { initMongoClient, initRedisClient, initSentry, log } from '@core';
-import { initEquipmentWatcher, initTransprotWatcher } from '@lib';
+import { initRedisClient, initSentry, log } from '@core';
 import { errToStr } from '@utils';
 import http from 'http';
 import url from 'url';
@@ -13,14 +12,33 @@ const server = http.createServer();
 
 const init = async () => {
   try {
-    const mongo = await initMongoClient();
     const redis = await initRedisClient();
 
     const wssTransport = new WebSocket.Server({ noServer: true });
-    initTransprotWatcher({ wss: wssTransport, mongo, redis });
+    wssTransport.on('connection', () => {
+      log.debug('new tranposrt connection');
+    });
+    redis.subscribe('kremen:transport:updates:buses', message => {
+      log.debug('new tranposrt buses update', { message });
+      wssTransport.clients.forEach(ws => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(`{"type":"buses","data":${message}}`));
+        }
+      });
+    });
 
     const wssEqipment = new WebSocket.Server({ noServer: true });
-    initEquipmentWatcher({ wss: wssEqipment, mongo, redis });
+    wssEqipment.on('connection', () => {
+      log.debug('new equipment connection');
+    });
+    redis.subscribe('kremen:equipment:updates:items', message => {
+      log.debug('new equipment items update', { message });
+      wssTransport.clients.forEach(ws => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(`{"type":"items","data":${message}}`));
+        }
+      });
+    });
 
     server.on('upgrade', (request, socket, head) => {
       if (!request.url) return;

@@ -21,7 +21,8 @@
     "md5": "2.3.0",
     "micro": "9.3.4",
     "mongodb": "4.2.2",
-    "randomcolor": "0.6.2"
+    "randomcolor": "0.6.2",
+    "redis": "4.0.3"
   },
   "devDependencies": {
     "@types/lodash": "4.14.177",

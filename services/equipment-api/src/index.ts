@@ -1,11 +1,12 @@
 import { config } from '@config';
-import { initMongoClient, initSentry, log } from '@core';
-import { api, DatasourceError } from '@lib';
+import { initMongo, initRedis, initSentry, log } from '@core';
+import { api, DatasourceError, handleItemsUpdate } from '@lib';
 import * as Sentry from '@sentry/node';
 import {
   errToStr,
   HttpQs,
   isStr,
+  secMs,
   sendDatasourceErr,
   sendErr,
   sendInternalServerErr,
@@ -13,6 +14,7 @@ import {
   sendOk,
   sendParamMissedErr,
   sendWrongFormatErr,
+  Timer,
 } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
 import micro from 'micro';
@@ -52,7 +54,7 @@ const handleLog = (db: Db) => async (res: ServerResponse, httpQuery: HttpQs) => 
   return sendOk(res, data);
 };
 
-const handler = (db: Db) => async (req: IncomingMessage, res: ServerResponse) => {
+const reqHandler = (db: Db) => async (req: IncomingMessage, res: ServerResponse) => {
   const { pathname = '', query = {} } = req.url ? url.parse(req.url, true) : {};
   if (!pathname) return sendNotFoundErr(res, 'Endpoint not found');
   try {
@@ -69,12 +71,32 @@ const handler = (db: Db) => async (req: IncomingMessage, res: ServerResponse) =>
   }
 };
 
-initMongoClient()
-  .then(db => {
-    const server = micro(handler(db));
-    log.info('starting server', { port: config.port });
+const start = async () => {
+  try {
+    const { db, client: mongo } = await initMongo();
+    const redis = await initRedis();
+
+    const server = micro(reqHandler(db));
+    log.info('start server', { port: config.port });
     server.listen(config.port);
-  })
-  .catch(err => {
-    log.err('init mongo db err', { err: errToStr(err) });
-  });
+
+    const itemsUpdater = new Timer(secMs * 5, handleItemsUpdate(db, redis));
+    itemsUpdater.start();
+
+    process.on('SIGTERM', async () => {
+      try {
+        log.info('SIGTERM signal received');
+        itemsUpdater.stop();
+        server.close();
+        mongo.close();
+        redis.disconnect();
+      } catch (err: unknown) {
+        log.err('SIGTERM signal processing err', { msg: errToStr(err) });
+      }
+    });
+  } catch (err: unknown) {
+    log.err('start server err', { msg: errToStr(err) });
+  }
+};
+
+start();

@@ -12,9 +12,8 @@ services:
       - transport-api
       - equipment-web
       - equipment-api
-      - cinemas-ds
       - cinemas-api
-      - watchman
+      - ws
     volumes:
       - 'ssl:/etc/letsencrypt'
     ports:
@@ -28,21 +27,6 @@ services:
     hostname: main-web
     restart: always
 
-  watchman:
-    image: ghcr.io/husky-dev/kremen-api/watchman:latest
-    container_name: watchman
-    hostname: watchman
-    depends_on:
-      - transport-api
-      - equipment-api
-      - mongo
-      - redis
-    environment:
-      - NODE_ENV=prd
-      - LOG_LEVEL=info
-      - SENTRY_DSN=$WATCHMAN_API_SENTRY_DSN
-    restart: always
-
   transport-web:
     image: ghcr.io/husky-dev/kremen-transport-web/app:latest
     container_name: transport-web
@@ -53,6 +37,9 @@ services:
     image: ghcr.io/husky-dev/kremen-api/transport-api:latest
     container_name: transport-api
     hostname: transport-api
+    depends_on:
+      - mongo
+      - redis
     environment:
       - NODE_ENV=prd
       - LOG_LEVEL=info
@@ -69,6 +56,9 @@ services:
     image: ghcr.io/husky-dev/kremen-api/equipment-api:latest
     container_name: equipment-api
     hostname: equipment-api
+    depends_on:
+      - mongo
+      - redis
     environment:
       - NODE_ENV=prd
       - LOG_LEVEL=info
@@ -79,8 +69,6 @@ services:
     image: ghcr.io/husky-dev/kremen-api/cinemas-api:latest
     container_name: cinemas-api
     hostname: cinemas-api
-    depends_on:
-      - cinemas-ds
     environment:
       - NODE_ENV=prd
       - LOG_LEVEL=info
@@ -89,14 +77,16 @@ services:
       - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
     restart: always
 
-  cinemas-ds:
-    image: ghcr.io/husky-dev/kremen-api/cinemas-ds:latest
-    container_name: cinemas-ds
-    hostname: cinemas-ds
+  ws:
+    image: ghcr.io/husky-dev/kremen-api/ws:latest
+    container_name: ws
+    hostname: ws
+    depends_on:
+      - redis
     environment:
       - NODE_ENV=prd
       - LOG_LEVEL=info
-      - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
+      - SENTRY_DSN=$WS_SENTRY_DSN
     restart: always
 
   redis:

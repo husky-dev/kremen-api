@@ -79,7 +79,6 @@ services:
     volumes:
       - './services/ws:/usr/src/app'
     depends_on:
-      - mongo
       - redis
     environment:
       - NODE_ENV=development

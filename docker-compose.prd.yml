@@ -94,9 +94,12 @@ services:
     image: ghcr.io/husky-dev/kremen-api/img:latest
     container_name: img
     hostname: img
+    volumes:
+      - 'img-cache:/usr/src/app/cache'
     environment:
       - NODE_ENV
       - LOG_LEVEL
+      - CACHE_ENABLED
     restart: always
 
   redis:
@@ -122,3 +125,5 @@ volumes:
     name: redis
   mongo:
     name: mongo
+  img-cache:
+    name: img-cache

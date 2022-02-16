@@ -1,3 +1,5 @@
+default: build
+
 build:
 	docker build -t ghcr.io/husky-dev/kremen-api/nginx:latest ./services/nginx
 	docker build -t ghcr.io/husky-dev/kremen-api/transport-api:latest ./services/transport-api
@@ -15,10 +17,10 @@ push:
 	docker push ghcr.io/husky-dev/kremen-api/backup:latest
 
 sync:
-	rsync -aP ./common/ ./services/equipment-api
-	rsync -aP ./common/ ./services/transport-api
-	rsync -aP ./common/ ./services/cinemas-api
-	rsync -aP ./common/ ./services/ws
+	rsync -aP ./common/services/ ./services/equipment-api
+	rsync -aP ./common/services/ ./services/transport-api
+	rsync -aP ./common/services/ ./services/cinemas-api
+	rsync -aP ./common/services/ ./services/ws
 
 lint:
 	cd services/equipment-api && yarn lint:types

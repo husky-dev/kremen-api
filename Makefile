@@ -20,7 +20,7 @@ push:
 	docker push ghcr.io/husky-dev/kremen-api/img:latest
 	docker push ghcr.io/husky-dev/kremen-api/backup:latest
 
-push:
+pull:
 	docker pull ghcr.io/husky-dev/kremen-api/builder:latest
 	docker pull ghcr.io/husky-dev/kremen-api/nginx:latest
 	docker pull ghcr.io/husky-dev/kremen-api/transport-api:latest

@@ -13,9 +13,9 @@
     "lint:eslint": "eslint \"src/**\""
   },
   "dependencies": {
-    "@sentry/node": "6.17.6",
-    "@sentry/tracing": "6.17.6",
-    "axios": "0.25.0",
+    "@sentry/node": "6.17.8",
+    "@sentry/tracing": "6.17.8",
+    "axios": "0.26.0",
     "cheerio": "1.0.0-rc.10",
     "iconv-lite": "0.6.3",
     "joi": "17.6.0",

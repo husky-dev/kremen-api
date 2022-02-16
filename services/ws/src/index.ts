@@ -3,7 +3,7 @@ import { initRedisClient, initSentry, log } from '@core';
 import { errToStr } from '@utils';
 import http from 'http';
 import url from 'url';
-import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 
 initSentry();
 log.info('config', config);
@@ -14,7 +14,7 @@ const init = async () => {
   try {
     const redis = await initRedisClient();
 
-    const wssTransport = new WebSocket.Server({ noServer: true });
+    const wssTransport = new WebSocketServer({ noServer: true });
     wssTransport.on('connection', () => {
       log.debug('new tranposrt connection');
     });
@@ -27,7 +27,7 @@ const init = async () => {
       });
     });
 
-    const wssEqipment = new WebSocket.Server({ noServer: true });
+    const wssEqipment = new WebSocketServer({ noServer: true });
     wssEqipment.on('connection', () => {
       log.debug('new equipment connection');
     });

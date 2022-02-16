@@ -13,17 +13,17 @@
     "lint:eslint": "eslint \"src/**\""
   },
   "dependencies": {
-    "@sentry/node": "6.16.0",
-    "@sentry/tracing": "6.16.0",
+    "@sentry/node": "6.17.8",
+    "@sentry/tracing": "6.17.8",
     "joi": "17.6.0",
     "micro": "9.3.4",
-    "redis": "4.0.0",
-    "ws": "7.3.1"
+    "redis": "4.0.3",
+    "ws": "8.5.0"
   },
   "devDependencies": {
     "@types/micro": "7.3.6",
     "@types/node": "14.11.8",
-    "@types/ws": "7.2.7",
+    "@types/ws": "8.2.2",
     "@typescript-eslint/eslint-plugin": "5.6.0",
     "@typescript-eslint/parser": "5.6.0",
     "esbuild": "0.14.21",

@@ -20,6 +20,16 @@ push:
 	docker push ghcr.io/husky-dev/kremen-api/img:latest
 	docker push ghcr.io/husky-dev/kremen-api/backup:latest
 
+push:
+	docker pull ghcr.io/husky-dev/kremen-api/builder:latest
+	docker pull ghcr.io/husky-dev/kremen-api/nginx:latest
+	docker pull ghcr.io/husky-dev/kremen-api/transport-api:latest
+	docker pull ghcr.io/husky-dev/kremen-api/equipment-api:latest
+	docker pull ghcr.io/husky-dev/kremen-api/cinemas-api:latest
+	docker pull ghcr.io/husky-dev/kremen-api/ws:latest
+	docker pull ghcr.io/husky-dev/kremen-api/img:latest
+	docker pull ghcr.io/husky-dev/kremen-api/backup:latest
+
 sync:
 	rsync -aP ./common/services/ ./services/equipment-api
 	rsync -aP ./common/services/ ./services/transport-api

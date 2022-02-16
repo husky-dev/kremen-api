@@ -22,6 +22,8 @@ jobs:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.CR_PAT }}
+    - name: 'Docker: pull'
+      run: make pull
     - name: 'Docker: build'
       run: make build
     - name: 'Docker: push'

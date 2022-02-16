@@ -71,6 +71,21 @@ services:
       - '8083:8080'
     command: 'yarn start:dev'
 
+  img:
+    image: node:17.4-alpine3.15
+    container_name: img
+    hostname: img
+    working_dir: '/usr/src/app'
+    volumes:
+      - './services/img:/usr/src/app'
+    environment:
+      - NODE_ENV=dev
+      - LOG_LEVEL=debug
+      - FONTCONFIG_PATH=/usr/src/app/fonts
+    ports:
+      - '8084:8080'
+    command: 'yarn start:dev'
+
   ws:
     image: node:17.4-alpine3.15
     container_name: ws

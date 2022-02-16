@@ -47,9 +47,11 @@ export const unique = <D>(arr: D[]): D[] => {
 export const getObjectsDiff = <T extends Object>(prev: T, next: T): Partial<T> => {
   const res: Partial<T> = {};
   type K = keyof T;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const keys: K[] = Object.keys(next) as unknown as K[];
   for (const key of keys) {
     if (next[key] !== prev[key]) {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any
       res[key] = next[key] as any;
     }
   }

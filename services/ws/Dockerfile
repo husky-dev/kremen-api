@@ -8,7 +8,7 @@ RUN yarn dist
 
 FROM node:17.4-alpine3.15
 
-LABEL org.opencontainers.image.source https://github.com/husky-dev/moa-api
+LABEL org.opencontainers.image.source https://github.com/husky-dev/kremen-api
 
 ENV NODE_ENV=prd
 ENV PORT=8080

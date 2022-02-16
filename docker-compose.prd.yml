@@ -13,6 +13,7 @@ services:
       - equipment-web
       - equipment-api
       - cinemas-api
+      - img
       - ws
     volumes:
       - 'ssl:/etc/letsencrypt'
@@ -41,8 +42,8 @@ services:
       - mongo
       - redis
     environment:
-      - NODE_ENV=prd
-      - LOG_LEVEL=info
+      - NODE_ENV
+      - LOG_LEVEL
       - SENTRY_DSN=$TRANSPORT_API_SENTRY_DSN
     restart: always
 
@@ -60,8 +61,8 @@ services:
       - mongo
       - redis
     environment:
-      - NODE_ENV=prd
-      - LOG_LEVEL=info
+      - NODE_ENV
+      - LOG_LEVEL
       - SENTRY_DSN=$EQUIPMENT_API_SENTRY_DSN
     restart: always
 
@@ -70,8 +71,8 @@ services:
     container_name: cinemas-api
     hostname: cinemas-api
     environment:
-      - NODE_ENV=prd
-      - LOG_LEVEL=info
+      - NODE_ENV
+      - LOG_LEVEL
       - BOT_TOKEN=$CINEMAS_BOT_TOKEN
       - BOT_WEBHOOK=$CINEMAS_BOT_WEBHOOK
       - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
@@ -84,9 +85,18 @@ services:
     depends_on:
       - redis
     environment:
-      - NODE_ENV=prd
-      - LOG_LEVEL=info
+      - NODE_ENV
+      - LOG_LEVEL
       - SENTRY_DSN=$WS_SENTRY_DSN
+    restart: always
+
+  img:
+    image: ghcr.io/husky-dev/kremen-api/img:latest
+    container_name: img
+    hostname: img
+    environment:
+      - NODE_ENV
+      - LOG_LEVEL
     restart: always
 
   redis:

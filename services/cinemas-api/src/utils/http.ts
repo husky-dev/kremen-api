@@ -45,11 +45,13 @@ export const sendDatasourceErr = (res: ServerResponse, message: string = 'Dataso
 
 interface ResponseOpt {
   cors?: boolean;
-  cache?: {
-    type?: 'private' | 'public';
-    sec?: number;
-  };
+  cache?: ResponseOptCache;
   contentType?: string;
+}
+
+export interface ResponseOptCache {
+  type?: 'private' | 'public';
+  sec?: number;
 }
 
 const setContentTypeHeaders = (res: ServerResponse, opt?: ResponseOpt) => {

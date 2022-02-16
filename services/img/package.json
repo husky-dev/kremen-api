@@ -1,0 +1,30 @@
+{
+  "name": "kremen-img",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn start:prd",
+    "start:prd": "node --no-deprecation dist/index.js",
+    "start:dev": "yarn install && nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"yarn dist && node --no-deprecation dist/index.js\"",
+    "dist": "esbuild src/index.ts --outfile=dist/index.js --bundle --sourcemap --external:sharp --minify --platform=node --target=node17.4",
+    "lint": "yarn lint:types && yarn lint:eslint",
+    "lint:types": "tsc --noEmit --skipLibCheck",
+    "lint:eslint": "eslint \"src/**\""
+  },
+  "dependencies": {
+    "joi": "17.6.0",
+    "micro": "9.3.4",
+    "sharp": "0.30.1"
+  },
+  "devDependencies": {
+    "@types/micro": "7.3.6",
+    "@types/sharp": "0.29.5",
+    "@typescript-eslint/eslint-plugin": "5.12.0",
+    "@typescript-eslint/parser": "5.12.0",
+    "esbuild": "0.14.21",
+    "eslint": "8.9.0",
+    "nodemon": "2.0.15",
+    "typescript": "4.5.5"
+  }
+}

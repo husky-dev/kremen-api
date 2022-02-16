@@ -1,0 +1,6 @@
+FROM node:17.4-alpine3.15
+
+WORKDIR /usr/src/app
+
+RUN apk add --no-cache fontconfig freetype ttf-freefont font-noto-emoji
+ENV FONTCONFIG_PATH=/usr/src/app/fonts

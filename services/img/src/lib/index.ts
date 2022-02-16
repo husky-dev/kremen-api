@@ -11,6 +11,7 @@ import iconPinRight3 from './assets/pinRight3.svg.txt';
 import iconPinRight4 from './assets/pinRight4.svg.txt';
 import iconTrolleybusLeft from './assets/trolleybusLeft.svg.txt';
 import iconTrolleybusRight from './assets/trolleybusRight.svg.txt';
+import pinStation from './assets/pinStation.svg.txt';
 
 export const getTransportIconCode = (busType: TransportType, direction: number, number: string, light: string, dark: string) => {
   const rotate = direction + 180;
@@ -41,3 +42,5 @@ const clearRouteNumber = (val: string): string =>
     .replace(/[ТтTt-\s]/g, '')
     .trim()
     .toUpperCase();
+
+export const getStationIcon = () => pinStation;

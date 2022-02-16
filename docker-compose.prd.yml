@@ -22,13 +22,13 @@ services:
     restart: always
 
   main-web:
-    image: ghcr.io/husky-dev/kremen-main-web/app:latest
+    image: ghcr.io/husky-dev/kremen-api/main-web:latest
     container_name: main-web
     hostname: main-web
     restart: always
 
   transport-web:
-    image: ghcr.io/husky-dev/kremen-transport-web/app:latest
+    image: ghcr.io/husky-dev/kremen-api/transport-web:latest
     container_name: transport-web
     hostname: transport-web
     restart: always
@@ -47,7 +47,7 @@ services:
     restart: always
 
   equipment-web:
-    image: ghcr.io/husky-dev/kremen-equipment-web/app:latest
+    image: ghcr.io/husky-dev/kremen-api/equipment-web:latest
     container_name: equipment-web
     hostname: equipment-web
     restart: always

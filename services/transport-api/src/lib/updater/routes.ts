@@ -17,7 +17,7 @@ export const handleRoutesUpdate = (db: MongoDb, redis: RedisClient) => async () 
     log.debug('routes update started');
 
     log.debug('getting routes');
-    const routes = await api.getRoutes();
+    const routes = await api.getRoutesWithStations();
     log.debug('getting routes done');
 
     log.debug('saving response to cache');

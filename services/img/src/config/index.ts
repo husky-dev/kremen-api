@@ -1,4 +1,7 @@
-import { getAppEnv, getAppName, getAppVersion, getLogLevelEnv, getNumEnv } from './utils';
+import { getAppEnv, getAppName, getAppVersion, getBoolEnv, getLogLevelEnv, getNumEnv } from './utils';
+import path from 'path';
+
+const cacheFolderPath = path.resolve(__dirname, '../cache');
 
 export const config = {
   env: getAppEnv(),
@@ -7,6 +10,10 @@ export const config = {
   port: getNumEnv('PORT', 8080),
   log: {
     level: getLogLevelEnv('LOG_LEVEL', 'info'),
+  },
+  cache: {
+    enabled: getBoolEnv('CACHE_ENABLED', false),
+    folder: cacheFolderPath,
   },
 };
 

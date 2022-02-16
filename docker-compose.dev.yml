@@ -83,6 +83,7 @@ services:
     environment:
       - NODE_ENV=dev
       - LOG_LEVEL=debug
+      - CACHE_ENABLED=true
     ports:
       - '8084:8080'
     command: 'yarn start:dev'

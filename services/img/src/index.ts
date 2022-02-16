@@ -1,5 +1,5 @@
 import { config } from '@config';
-import { log, TransportType } from '@core';
+import { addFileToCache, getFileFromCache, initCacheFolder, isCacheEnabled, log, TransportType } from '@core';
 import { getStationIcon, getTransportIconCode } from '@lib';
 import {
   createHttpRouter,
@@ -13,9 +13,9 @@ import {
   sendUnprocessableEntityErr,
 } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
+import Joi from 'joi';
 import micro from 'micro';
 import sharp from 'sharp';
-import Joi from 'joi';
 
 // initSentry();
 log.info('config', config);
@@ -51,14 +51,30 @@ const handleTransportBusPin: HttpRouteHandler = async (req, res, opt) => {
   const dark = query?.dark || '#8E3339';
   const number = query?.number || '1';
   const direction = query?.direction || 180;
+  const version = query?.v || '1';
   if (query?.d) density = density * query.d;
+
+  const cacheEnabled = isCacheEnabled(req.headers, opt.query);
+  const lightStr = light.toLowerCase().replace('#', '');
+  const darkStr = dark.toLowerCase().replace('#', '');
+  const typeStr = type.toLowerCase();
+  const cacheFileName = `tr-bs-pin-d${density}-t${typeStr}-l${lightStr}-d${darkStr}-n${number}-dr${direction}-v${version}.png`;
+  const cacheHeader: ResponseOptCache | undefined =
+    config.env === 'dev' || !cacheEnabled ? undefined : { type: 'public', sec: daySec * 365 };
+  if (cacheEnabled) {
+    const cachedFile = await getFileFromCache(cacheFileName);
+    if (cachedFile) {
+      log.debug('returning icon from cache');
+      return sendOk(res, cachedFile, { contentType: 'image/png', cache: cacheHeader });
+    }
+  }
 
   const data = await sharp(Buffer.from(getTransportIconCode(type, direction, number, light, dark)), { density })
     .png()
     .toBuffer();
 
-  const cache: ResponseOptCache | undefined = config.env === 'dev' ? undefined : { type: 'public', sec: daySec * 365 };
-  return await sendOk(res, data, { contentType: 'image/png', cache });
+  if (cacheEnabled) addFileToCache(cacheFileName, data);
+  return await sendOk(res, data, { contentType: 'image/png', cache: cacheHeader });
 };
 
 interface TransportStationPinQuery {
@@ -76,12 +92,25 @@ const handleTransportStationPin: HttpRouteHandler = async (req, res, opt) => {
   if (error) return sendUnprocessableEntityErr(res, joiErrToStr(error));
 
   let density = 72;
+  const version = query?.v || '1';
   if (query?.d) density = density * query.d;
+
+  const cacheEnabled = isCacheEnabled(req.headers, opt.query);
+  const cacheFileName = `tr-st-pin-d${density}-v${version}.png`;
+  const cacheHeader: ResponseOptCache | undefined =
+    config.env === 'dev' || !cacheEnabled ? undefined : { type: 'public', sec: daySec * 365 };
+  if (cacheEnabled) {
+    const cachedFile = await getFileFromCache(cacheFileName);
+    if (cachedFile) {
+      log.debug('returning icon from cache');
+      return sendOk(res, cachedFile, { contentType: 'image/png', cache: cacheHeader });
+    }
+  }
 
   const data = await sharp(Buffer.from(getStationIcon()), { density }).png().toBuffer();
 
-  const cache: ResponseOptCache | undefined = config.env === 'dev' ? undefined : { type: 'public', sec: daySec * 365 };
-  return await sendOk(res, data, { contentType: 'image/png', cache });
+  if (cacheEnabled) addFileToCache(cacheFileName, data);
+  return sendOk(res, data, { contentType: 'image/png', cache: cacheHeader });
 };
 
 const handleHttpRequest = async (req: IncomingMessage, res: ServerResponse) => {
@@ -98,6 +127,8 @@ const handleHttpRequest = async (req: IncomingMessage, res: ServerResponse) => {
 
 const start = async () => {
   try {
+    initCacheFolder();
+
     const server = micro(handleHttpRequest);
     server.listen(config.port);
 

@@ -1,8 +1,6 @@
-FROM node:17.4-alpine3.15 AS builder
+FROM ghcr.io/husky-dev/kremen-api/builder:latest AS builder
 
-WORKDIR /usr/src/app
 COPY package.json yarn.lock tsconfig.json ./
-RUN yarn install
 COPY src ./src
 RUN yarn lint:types
 RUN yarn dist
@@ -10,7 +8,7 @@ RUN yarn dist
 
 FROM node:17.4-alpine3.15
 
-LABEL org.opencontainers.image.source https://github.com/husky-dev/kremen-api
+LABEL org.opencontainers.image.source https://github.com/husky-dev/moa-api
 
 ENV NODE_ENV=prd
 ENV PORT=8080

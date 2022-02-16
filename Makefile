@@ -1,14 +1,16 @@
 default: build
 
 build:
-	docker build -t ghcr.io/husky-dev/kremen-api/nginx:latest ./services/nginx
+	docker build -t ghcr.io/husky-dev/kremen-api/builder:latest ./common/images/builder
 	docker build -t ghcr.io/husky-dev/kremen-api/transport-api:latest ./services/transport-api
 	docker build -t ghcr.io/husky-dev/kremen-api/equipment-api:latest ./services/equipment-api
 	docker build -t ghcr.io/husky-dev/kremen-api/cinemas-api:latest ./services/cinemas-api
 	docker build -t ghcr.io/husky-dev/kremen-api/ws:latest ./services/ws
 	docker build -t ghcr.io/husky-dev/kremen-api/backup:latest ./services/backup
+	docker build -t ghcr.io/husky-dev/kremen-api/nginx:latest ./services/nginx
 
 push:
+	docker push ghcr.io/husky-dev/kremen-api/builder:latest
 	docker push ghcr.io/husky-dev/kremen-api/nginx:latest
 	docker push ghcr.io/husky-dev/kremen-api/transport-api:latest
 	docker push ghcr.io/husky-dev/kremen-api/equipment-api:latest

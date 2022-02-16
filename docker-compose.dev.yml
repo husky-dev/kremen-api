@@ -19,7 +19,7 @@ services:
       - '80:80'
 
   transport-api:
-    image: node:14-alpine3.10
+    image: node:17.4-alpine3.15
     container_name: transport-api
     hostname: transport-api
     working_dir: '/usr/src/app'
@@ -37,7 +37,7 @@ services:
     command: 'yarn start:dev'
 
   equipment-api:
-    image: node:14-alpine3.10
+    image: node:17.4-alpine3.15
     container_name: equipment-api
     hostname: equipment-api
     working_dir: '/usr/src/app'
@@ -55,7 +55,7 @@ services:
     command: 'yarn start:dev'
 
   cinemas-api:
-    image: node:14-alpine3.10
+    image: node:17.4-alpine3.15
     container_name: cinemas-api
     hostname: cinemas-api
     working_dir: '/usr/src/app'
@@ -72,7 +72,7 @@ services:
     command: 'yarn start:dev'
 
   ws:
-    image: node:14-alpine3.10
+    image: node:17.4-alpine3.15
     container_name: ws
     hostname: ws
     working_dir: '/usr/src/app'

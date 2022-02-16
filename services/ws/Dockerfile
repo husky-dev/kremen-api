@@ -17,6 +17,4 @@ WORKDIR /usr/src/app
 
 CMD node --no-deprecation dist/index.js
 
-RUN yarn add -E ws@8.5.0
-
 COPY --from=builder /usr/src/app/dist ./dist

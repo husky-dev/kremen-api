@@ -3,7 +3,7 @@ import { initRedisClient, initSentry, log } from '@core';
 import { errToStr } from '@utils';
 import http from 'http';
 import url from 'url';
-import { WebSocketServer } from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 
 initSentry();
 log.info('config', config);

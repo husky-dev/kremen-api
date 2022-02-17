@@ -2,7 +2,7 @@
 <g id="pinRight" clip-path="url(#clip0_1_3)">
 <g id="label4">
 <path id="background" d="M52.5 14.8684H27.5C24.7386 14.8684 22.5 17.4268 22.5 20.5827V25.1541C22.5 28.31 24.7386 30.8684 27.5 30.8684H52.5C55.2614 30.8684 57.5 28.31 57.5 25.1541V20.5827C57.5 17.4268 55.2614 14.8684 52.5 14.8684Z" fill="#E0535D" stroke="#8E3339"/>
-<text id="text" fill="white" xml:space="preserve" style="white-space: pre" font-family="Arial" font-size="7" font-weight="bold" letter-spacing="0em"><tspan x="40" y="25.4268">2222</tspan></text>
+<text id="text" fill="white" xml:space="preserve" style="white-space: pre" font-family="Arial" font-size="6" font-weight="bold" letter-spacing="0em"><tspan x="40" y="25.4268">2222</tspan></text>
 </g>
 <g id="pin">
 <g id="icon">

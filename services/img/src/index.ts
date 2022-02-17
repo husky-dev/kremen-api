@@ -1,6 +1,15 @@
 import { config } from '@config';
-import { addFileToCache, getFileFromCache, initCacheFolder, isCacheEnabled, log, TransportType } from '@core';
-import { getStationIcon, getTransportIconCode } from '@lib';
+import { addFileToCache, getFileFromCache, initCacheFolder, isCacheEnabled, log } from '@core';
+import {
+  getStationIcon,
+  getTransportBusPinIconCode,
+  getTransportBusIconFileName,
+  TransportBusPinIcon,
+  TransportBusPinQuerySchema,
+  TransportStationPinIcon,
+  TransportStationPinQuerySchema,
+  getTransportStationIconFileName,
+} from '@lib';
 import {
   createHttpRouter,
   daySec,
@@ -13,63 +22,41 @@ import {
   sendUnprocessableEntityErr,
 } from '@utils';
 import { IncomingMessage, ServerResponse } from 'http';
-import Joi from 'joi';
 import micro from 'micro';
 import sharp from 'sharp';
 
 // initSentry();
 log.info('config', config);
 
-interface TransportBusPinQuery {
-  v?: string;
-  d?: number;
-  light?: string;
-  dark?: string;
-  direction?: number;
-  number: string;
-  type?: 'bus' | 'trolleybus';
-}
-
-const TransportBusPinQuerySchema = Joi.object<TransportBusPinQuery>({
-  v: Joi.string(),
-  d: Joi.number().min(1).max(3),
-  light: Joi.string(),
-  dark: Joi.string(),
-  direction: Joi.number().min(0).max(360),
-  number: Joi.string().required(),
-  type: Joi.string().valid('bus', 'trolleybus'),
-});
-
 const handleTransportBusPin: HttpRouteHandler = async (req, res, opt) => {
   const { error, value: query } = TransportBusPinQuerySchema.validate(opt.query);
   if (error) return sendUnprocessableEntityErr(res, joiErrToStr(error));
 
-  let density = 72;
-  let type = TransportType.Bus;
-  if (query?.type === 'trolleybus') type = TransportType.Trolleybus;
-  const light = query?.light || '#E0535D';
-  const dark = query?.dark || '#8E3339';
-  const number = query?.number || '1';
-  const direction = query?.direction || 180;
-  const version = query?.v || '1';
-  if (query?.d) density = density * query.d;
+  const icon: TransportBusPinIcon = {
+    version: query?.v || 1,
+    light: query?.light || '#E0535D',
+    dark: query?.dark || '#8E3339',
+    type: query?.type || 'trolleybus',
+    number: query?.number || '1',
+    direction: query?.direction || 180,
+    density: query?.d ? query.d * 72 : 72,
+    theme: query?.theme || 'light',
+  };
 
   const cacheEnabled = isCacheEnabled(req.headers, opt.query);
-  const lightStr = light.toLowerCase().replace('#', '');
-  const darkStr = dark.toLowerCase().replace('#', '');
-  const typeStr = type.toLowerCase();
-  const cacheFileName = `tr-bs-pin-d${density}-t${typeStr}-l${lightStr}-d${darkStr}-n${number}-dr${direction}-v${version}.png`;
+  const cacheFileName = getTransportBusIconFileName(icon);
   const cacheHeader: ResponseOptCache | undefined =
     config.env === 'dev' || !cacheEnabled ? undefined : { type: 'public', sec: daySec * 365 };
   if (cacheEnabled) {
     const cachedFile = await getFileFromCache(cacheFileName);
     if (cachedFile) {
-      log.debug('returning icon from cache');
+      log.debug('returning icon from cache', { ...icon });
       return sendOk(res, cachedFile, { contentType: 'image/png', cache: cacheHeader });
     }
   }
 
-  const data = await sharp(Buffer.from(getTransportIconCode(type, direction, number, light, dark)), { density })
+  log.debug('generating new icon', { ...icon });
+  const data = await sharp(Buffer.from(getTransportBusPinIconCode(icon)), { density: icon.density })
     .png()
     .toBuffer();
 
@@ -77,26 +64,18 @@ const handleTransportBusPin: HttpRouteHandler = async (req, res, opt) => {
   return await sendOk(res, data, { contentType: 'image/png', cache: cacheHeader });
 };
 
-interface TransportStationPinQuery {
-  v?: string;
-  d?: number;
-}
-
-const TransportStationPinQuerySchema = Joi.object<TransportStationPinQuery>({
-  v: Joi.string(),
-  d: Joi.number().min(1).max(3),
-});
-
 const handleTransportStationPin: HttpRouteHandler = async (req, res, opt) => {
   const { error, value: query } = TransportStationPinQuerySchema.validate(opt.query);
   if (error) return sendUnprocessableEntityErr(res, joiErrToStr(error));
 
-  let density = 72;
-  const version = query?.v || '1';
-  if (query?.d) density = density * query.d;
+  const icon: TransportStationPinIcon = {
+    version: query?.v || 1,
+    density: query?.d ? query.d * 72 : 72,
+    theme: query?.theme || 'light',
+  };
 
   const cacheEnabled = isCacheEnabled(req.headers, opt.query);
-  const cacheFileName = `tr-st-pin-d${density}-v${version}.png`;
+  const cacheFileName = getTransportStationIconFileName(icon);
   const cacheHeader: ResponseOptCache | undefined =
     config.env === 'dev' || !cacheEnabled ? undefined : { type: 'public', sec: daySec * 365 };
   if (cacheEnabled) {
@@ -107,7 +86,9 @@ const handleTransportStationPin: HttpRouteHandler = async (req, res, opt) => {
     }
   }
 
-  const data = await sharp(Buffer.from(getStationIcon()), { density }).png().toBuffer();
+  const data = await sharp(Buffer.from(getStationIcon(icon)), { density: icon.density })
+    .png()
+    .toBuffer();
 
   if (cacheEnabled) addFileToCache(cacheFileName, data);
   return sendOk(res, data, { contentType: 'image/png', cache: cacheHeader });

@@ -2,7 +2,7 @@
 <g id="pinLeft">
 <g id="label3">
 <path id="labelBackground" d="M5.5 15.8684H30.5C33.2614 15.8684 35.5 18.107 35.5 20.8684V24.8684C35.5 27.6298 33.2614 29.8684 30.5 29.8684H5.5C2.73857 29.8684 0.5 27.6298 0.5 24.8684V20.8684C0.5 18.107 2.73857 15.8684 5.5 15.8684Z" fill="#E0535D" stroke="#8E3339"/>
-<text id="labelText" fill="white" xml:space="preserve" style="white-space: pre" font-family="Arial" font-size="10" font-weight="bold" letter-spacing="0em"><tspan x="2" y="25.9668">222</tspan></text>
+<text id="labelText" fill="white" xml:space="preserve" style="white-space: pre" font-family="Arial" font-size="9" font-weight="bold" letter-spacing="0em"><tspan x="2" y="25.9668">222</tspan></text>
 </g>
 <g id="pin">
 <g id="icon">

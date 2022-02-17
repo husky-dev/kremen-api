@@ -1,3 +1,4 @@
+export * from './crypto';
 export * from './date';
 export * from './http';
 export * from './joi';

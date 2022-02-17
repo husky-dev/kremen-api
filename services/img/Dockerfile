@@ -16,7 +16,17 @@ EXPOSE 8080
 WORKDIR /usr/src/app
 
 CMD node --no-deprecation dist/index.js
-RUN apk add --no-cache fontconfig freetype ttf-freefont font-noto-emoji
+RUN apk add --no-cache \
+  fontconfig \
+  freetype \
+  ttf-freefont \
+  font-noto-emoji \
+  font-vollkorn \
+  font-misc-cyrillic \
+  font-mutt-misc \
+  font-screen-cyrillic \
+  font-winitzki-cyrillic \
+  font-cronyx-cyrillic
 ENV FONTCONFIG_PATH=/usr/src/app/fonts
 RUN yarn add -E sharp@0.30.1
 

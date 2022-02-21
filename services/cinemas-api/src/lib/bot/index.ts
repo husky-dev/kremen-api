@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { config } from '@config';
-import { getTelegramApi, isBotCmd, Log, TGMessage, TGUpdate } from '@core';
-import { getApi, Cinema } from '@core';
+import { Cinema, getTelegramApi, isBotCmd, Log, TGMessage, TGUpdate } from '@core';
+import { getFilmaxCinema, getGalaxyCinema } from '@lib/cinemas';
 import { errToStr, isNum, isUnknownDict, unique } from '@utils';
 
 const commandsMsgText = `
@@ -16,7 +16,6 @@ const log = Log('lib');
 
 const getBot = () => {
   const telegram = getTelegramApi({ token: config.bot.token });
-  const api = getApi({ apiRoot: 'http://cinemas-ds:8080/' });
 
   const processWebhookReq = async (data: unknown) => {
     if (isTGUpdate(data) && data.message) {
@@ -49,7 +48,7 @@ const getBot = () => {
 
   const processScheduleCmd = async (chatId: number) => {
     try {
-      const cinemas = await api.cinemas.list();
+      const cinemas: Cinema[] = await Promise.all([getGalaxyCinema(), getFilmaxCinema()]);
       const text = cinemasToMoviesMsg(cinemas);
       return sendMarkdownMsg(chatId, text);
     } catch (err: unknown) {

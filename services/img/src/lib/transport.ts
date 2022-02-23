@@ -12,9 +12,19 @@ import iconPinRight4 from './assets/pinRight4.svg.txt';
 import pinStation from './assets/pinStation.svg.txt';
 import iconTrolleybusLeft from './assets/trolleybusLeft.svg.txt';
 import iconTrolleybusRight from './assets/trolleybusRight.svg.txt';
+import iconPinBusRound from './assets/pinBusRound.svg.txt';
 import { TransportBusPinIcon, TransportStationPinIcon } from './types';
 
 export const getTransportBusPinIconCode = (icon: TransportBusPinIcon) => {
+  return icon.pin === 'circle' ? getTransportBusPinWithLabelIconCode(icon) : getTransportBusPinCircleIconCode(icon);
+};
+
+const getTransportBusPinWithLabelIconCode = (icon: TransportBusPinIcon) => {
+  const { light, dark } = icon;
+  return iconPinBusRound.replace(/#FFFFFF/g, dark).replace(/#5097D5/g, light);
+};
+
+const getTransportBusPinCircleIconCode = (icon: TransportBusPinIcon) => {
   const { direction, number, type: busType, light, dark } = icon;
   const rotate = direction + 180;
   const type = direction <= 180 ? 'left' : 'right';
@@ -25,7 +35,7 @@ export const getTransportBusPinIconCode = (icon: TransportBusPinIcon) => {
   if (label.length === 2) code = type === 'left' ? iconPinLeft2 : iconPinRight2;
   if (label.length === 3) code = type === 'left' ? iconPinLeft3 : iconPinRight3;
   if (label.length === 4) code = type === 'left' ? iconPinLeft4 : iconPinRight4;
-  if (busType === 'trolleybus') {
+  if (busType === 'trolleybus' || busType === 'T') {
     const icon = type === 'left' ? iconTrolleybusLeft : iconTrolleybusRight;
     code = code.replace(/<path id="transport"[\s\S]+?\/>/g, icon);
   }
@@ -37,10 +47,11 @@ export const getTransportBusPinIconCode = (icon: TransportBusPinIcon) => {
 };
 
 export const getTransportBusIconFileName = (icon: TransportBusPinIcon) => {
-  const { light, dark, type, density, number, direction, version, theme } = icon;
+  const { light, dark, type, density, number, direction, version, theme, pin } = icon;
   const parts: string[] = [
     'tr-bs-pin',
     `d${density}`,
+    `p${clearPart(pin)}`,
     `t${clearPart(type)}`,
     `cl${clearPart(light)}`,
     `cd${clearPart(dark)}`,

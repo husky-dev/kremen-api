@@ -13,9 +13,12 @@ export interface TransportBusPinQuery {
   number: string;
   type?: TransportBusPinType;
   theme?: TransportIconTheme;
+  pin?: TransportPinType;
 }
 
-type TransportBusPinType = 'bus' | 'trolleybus';
+type TransportBusPinType = 'bus' | 'trolleybus' | 'B' | 'T';
+
+type TransportPinType = 'with-label' | 'circle';
 
 export const TransportBusPinQuerySchema = Joi.object<TransportBusPinQuery>({
   v: Joi.number().min(0).max(10),
@@ -24,8 +27,9 @@ export const TransportBusPinQuerySchema = Joi.object<TransportBusPinQuery>({
   dark: Joi.string(),
   direction: Joi.number().min(0).max(360),
   number: Joi.string().max(5).required(),
-  type: Joi.string().valid('bus', 'trolleybus'),
+  type: Joi.string().valid('bus', 'trolleybus', 'B', 'T'),
   theme: Joi.string().valid('light', 'dark'),
+  pin: Joi.string().valid('with-label', 'circle'),
 });
 
 export interface TransportBusPinIcon {
@@ -37,6 +41,7 @@ export interface TransportBusPinIcon {
   number: string;
   type: TransportBusPinType;
   theme: TransportIconTheme;
+  pin: TransportPinType;
 }
 
 // Station

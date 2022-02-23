@@ -41,6 +41,7 @@ const handleTransportBusPin: HttpRouteHandler = async (req, res, opt) => {
     direction: query?.direction || 180,
     density: query?.d ? query.d * 72 : 72,
     theme: query?.theme || 'light',
+    pin: query?.pin || 'with-label',
   };
 
   const cacheEnabled = isCacheEnabled(req.headers, opt.query);

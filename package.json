@@ -1,6 +1,6 @@
 {
   "name": "kremen-api",
-  "version": "1.0.71",
+  "version": "1.0.72",
   "main": "index.js",
   "repository": "https://github.com/husky-dev/kremen-api.git",
   "author": "Jaroslav Khorishchenko <jaro@smartapp.dev>",

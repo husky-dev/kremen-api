@@ -15,7 +15,7 @@
   "dependencies": {
     "joi": "17.6.0",
     "micro": "9.3.4",
-    "sharp": "0.30.1"
+    "sharp": "0.30.5"
   },
   "devDependencies": {
     "@types/micro": "7.3.6",

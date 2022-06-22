@@ -123,6 +123,6 @@ services:
 
 volumes:
   redis:
-    name: redis
+    name: kremen-api-redis
   mongo:
-    name: mongo
+    name: kremen-api-mongo

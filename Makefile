@@ -13,7 +13,6 @@ push:
 	docker push ghcr.io/husky-dev/kremen-api/equipment-api:latest
 	docker push ghcr.io/husky-dev/kremen-api/ws:latest
 	docker push ghcr.io/husky-dev/kremen-api/img:latest
-	docker push ghcr.io/husky-dev/kremen-api/backup:latest
 
 pull:
 	docker pull ghcr.io/husky-dev/kremen-api/nginx:latest

@@ -7,12 +7,8 @@ services:
     container_name: nginx
     hostname: nginx
     depends_on:
-      - main-web
-      - transport-web
       - transport-api
-      - equipment-web
       - equipment-api
-      - cinemas-api
       - img
       - ws
     volumes:
@@ -20,18 +16,6 @@ services:
     ports:
       - '80:80'
       - '443:443'
-    restart: always
-
-  main-web:
-    image: ghcr.io/husky-dev/kremen-api/main-web:latest
-    container_name: main-web
-    hostname: main-web
-    restart: always
-
-  transport-web:
-    image: ghcr.io/husky-dev/kremen-api/transport-web:latest
-    container_name: transport-web
-    hostname: transport-web
     restart: always
 
   transport-api:
@@ -47,12 +31,6 @@ services:
       - SENTRY_DSN=$TRANSPORT_API_SENTRY_DSN
     restart: always
 
-  equipment-web:
-    image: ghcr.io/husky-dev/kremen-api/equipment-web:latest
-    container_name: equipment-web
-    hostname: equipment-web
-    restart: always
-
   equipment-api:
     image: ghcr.io/husky-dev/kremen-api/equipment-api:latest
     container_name: equipment-api
@@ -64,18 +42,6 @@ services:
       - NODE_ENV
       - LOG_LEVEL
       - SENTRY_DSN=$EQUIPMENT_API_SENTRY_DSN
-    restart: always
-
-  cinemas-api:
-    image: ghcr.io/husky-dev/kremen-api/cinemas-api:latest
-    container_name: cinemas-api
-    hostname: cinemas-api
-    environment:
-      - NODE_ENV
-      - LOG_LEVEL
-      - BOT_TOKEN=$CINEMAS_BOT_TOKEN
-      - BOT_WEBHOOK=$CINEMAS_BOT_WEBHOOK
-      - SENTRY_DSN=$CINEMAS_API_SENTRY_DSN
     restart: always
 
   ws:

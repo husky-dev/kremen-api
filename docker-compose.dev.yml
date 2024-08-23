@@ -19,12 +19,12 @@ services:
       - '80:80'
 
   transport-api:
-    image: node:17.4-alpine3.15
+    image: node:18-alpine3.16
     container_name: transport-api
     hostname: transport-api
-    working_dir: '/usr/src/app'
+    working_dir: '/srv'
     volumes:
-      - './services/transport-api:/usr/src/app'
+      - './services/transport-api:/srv'
     depends_on:
       - mongo
       - redis
@@ -113,7 +113,7 @@ services:
       - redis:/data
 
   mongo:
-    image: mongo:4.4
+    image: mongo:6.0.4
     container_name: mongo
     hostname: mongo
     ports:

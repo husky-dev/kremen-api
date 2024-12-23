@@ -42,6 +42,5 @@ export const routeColors: Record<string, string> = {
 
 export const routeNumberToColor = (routeNumber: string) => {
   const exColor = routeColors[routeNumber];
-  if (!exColor) log.warn('no color found for route', { routeNumber });
   return exColor ? exColor : randomcolor({ seed: routeNumber });
 };

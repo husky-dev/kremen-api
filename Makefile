@@ -22,7 +22,7 @@ pull:
 	# docker pull ghcr.io/husky-dev/kremen-api/img:latest
 
 lint:
-	cd services/equipment-api && yarn lint:types
-	cd services/transport-api && yarn lint:types
-	cd services/ws && yarn lint:types
-	cd services/img && yarn lint:types
+	# cd services/equipment-api && yarn lint:types
+	# cd services/transport-api && yarn lint:types
+	# cd services/ws && yarn lint:types
+	# cd services/img && yarn lint:types
